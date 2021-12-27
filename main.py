@@ -70,6 +70,8 @@ class Field:
             for field_x in range(len(self.field_map[0])):
                 screen.blit(self.field_map[field_y][field_x].image, (self.field_map[field_y][field_x].x,
                                                                      self.field_map[field_y][field_x].y))
+                pygame.draw.rect(screen, pygame.Color('white'),
+                                 (self.field_map[field_y][field_x].x, self.field_map[field_y][field_x].y, self.cell_size, self.cell_size), 1)
 
     def get_cell(self, mouse_pos):
 
@@ -83,13 +85,35 @@ class Field:
             return None
 
 
-class Knight(pygame.sprite.Sprite):
+class Knight1(pygame.sprite.Sprite):
 
-    def __init__(self, *group):
+    def __init__(self, field, x, y, *group,):
         super().__init__(*group)
         self.image = load_image('knight.png', -1)
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = 0, 0
+        self.rect.x, self.rect.y = field.cell_size * x + field.cell_size // 4, field.cell_size * y + field.cell_size // 4
+
+        self.field = field
+        self.field_x = x
+        self.field_y = y
+
+        self.picked = False
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN:
+
+            if self.field.get_cell(args[0].pos)[0] == self.field_x and self.field.get_cell(args[0].pos)[1] == self.field_y:
+                self.picked = True
+            print(self.picked)
+
+            if (self.field.get_cell(args[0].pos)[0] != self.field_x or self.field.get_cell(args[0].pos)[1] != self.field_y) and self.picked is True:
+                new_pos_x = self.field.get_cell(args[0].pos)[0]
+                new_pos_y = self.field.get_cell(args[0].pos)[1]
+                self.rect = self.rect.move(-((self.field_x - new_pos_x) * 75), -((self.field_y - new_pos_y) * 75))
+
+                self.field_x = args[0].pos[0] // 75
+                self.field_y = args[0].pos[1] // 75
+                self.picked = False
 
 
 if __name__ == '__main__':
@@ -101,7 +125,8 @@ if __name__ == '__main__':
     field = Field('generation1')
 
     knights = pygame.sprite.Group()
-    knight = Knight(knights)
+    for i in range(1, 9):
+        knight = Knight1(field, 1, i, knights)
 
     running = True
     while running:
@@ -112,8 +137,7 @@ if __name__ == '__main__':
                 running = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                print(field.get_cell(event.pos))
-
+                knights.update(event)
 
         screen.fill((0, 0, 0))
         field.render(screen)
