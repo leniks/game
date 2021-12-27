@@ -83,6 +83,15 @@ class Field:
             return None
 
 
+class Knight(pygame.sprite.Sprite):
+
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = load_image('knight.png', -1)
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = 0, 0
+
+
 if __name__ == '__main__':
     pygame.init()
 
@@ -90,6 +99,9 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode(size)
 
     field = Field('generation1')
+
+    knights = pygame.sprite.Group()
+    knight = Knight(knights)
 
     running = True
     while running:
@@ -102,7 +114,10 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEBUTTONDOWN:
                 print(field.get_cell(event.pos))
 
+
         screen.fill((0, 0, 0))
         field.render(screen)
+
+        knights.draw(screen)
 
         pygame.display.flip()
