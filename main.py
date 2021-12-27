@@ -54,7 +54,7 @@ class Cell:
 class Field:
 
     def __init__(self, filename):
-        filename = "data/" + filename
+        filename = "data/" + filename + '.txt'
         self.cell_size = 75
 
         with open(filename, 'r') as map_file:
