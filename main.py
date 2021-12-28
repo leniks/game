@@ -30,9 +30,9 @@ class Cell:
         self.x = x
 
         if self.cell_type == 0:
-            self.image = load_image('трава.jpg')
+            self.image = load_image('трава.png')
         elif self.cell_type == 1:
-            self.image = load_image('камень.jpg')
+            self.image = load_image('камень.png')
 
         self.image = pygame.transform.scale(self.image, (self.size, self.size))
 
