@@ -22,6 +22,34 @@ def load_image(name, colorkey=None):
     return image
 
 
+def start_screen():
+    intro_text = ["123", "",
+                  "Правила игры..."]
+
+    fon = pygame.transform.scale(load_image('fon1.jpg'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 30)
+    text_coord = 50
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('white'))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN or \
+                    event.type == pygame.MOUSEBUTTONDOWN:
+                return  # начинаем игру
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
 class Cell:
     def __init__(self, cell_type, y, x):
         self.cell_type = cell_type
@@ -104,7 +132,6 @@ class Knight1(pygame.sprite.Sprite):
 
             if self.field.get_cell(args[0].pos)[0] == self.field_x and self.field.get_cell(args[0].pos)[1] == self.field_y:
                 self.picked = True
-            print(self.picked)
 
             if (self.field.get_cell(args[0].pos)[0] != self.field_x or self.field.get_cell(args[0].pos)[1] != self.field_y) and self.picked is True:
                 new_pos_x = self.field.get_cell(args[0].pos)[0]
@@ -116,32 +143,28 @@ class Knight1(pygame.sprite.Sprite):
                 self.picked = False
 
 
+clock = pygame.time.Clock()
+FPS = 120
 if __name__ == '__main__':
+
     pygame.init()
 
-    size = width, height = 750, 750
+    size = WIDTH, HEIGHT = 750, 750
     screen = pygame.display.set_mode(size)
-
+    start_screen()
     field = Field('generation1')
 
     knights = pygame.sprite.Group()
     for i in range(1, 9):
         knight = Knight1(field, 1, i, knights)
-
     running = True
     while running:
-
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 running = False
-
             if event.type == pygame.MOUSEBUTTONDOWN:
                 knights.update(event)
-
         screen.fill((0, 0, 0))
         field.render(screen)
-
         knights.draw(screen)
-
         pygame.display.flip()
