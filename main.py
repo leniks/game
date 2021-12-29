@@ -134,14 +134,19 @@ class Knight1(pygame.sprite.Sprite):
             if self.field.get_cell(args[0].pos)[0] == self.field_x and self.field.get_cell(args[0].pos)[1] == self.field_y:
                 self.picked = True
 
-            if (self.field.get_cell(args[0].pos)[0] != self.field_x or self.field.get_cell(args[0].pos)[1] != self.field_y) and self.picked is True:
-                new_pos_x = self.field.get_cell(args[0].pos)[0]
-                new_pos_y = self.field.get_cell(args[0].pos)[1]
-                self.rect = self.rect.move(-((self.field_x - new_pos_x) * 75), -((self.field_y - new_pos_y) * 75))
+            if self.picked is True:
 
-                self.field_x = args[0].pos[0] // 75
-                self.field_y = args[0].pos[1] // 75
-                self.picked = False
+                if self.field.get_cell(args[0].pos)[0] != self.field_x or self.field.get_cell(args[0].pos)[1] != self.field_y:
+                    new_pos_x = self.field.get_cell(args[0].pos)[0]
+                    new_pos_y = self.field.get_cell(args[0].pos)[1]
+                    self.rect = self.rect.move(-((self.field_x - new_pos_x) * 75), -((self.field_y - new_pos_y) * 75))
+
+                    self.field_x = args[0].pos[0] // 75
+                    self.field_y = args[0].pos[1] // 75
+                    self.picked = False
+
+                elif self.field.get_cell(args[0].pos)[0] == self.field_x and self.field.get_cell(args[0].pos)[1] == self.field_y:
+                    pass
 
 
 clock = pygame.time.Clock()
