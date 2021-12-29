@@ -52,9 +52,11 @@ def start_screen():
 
 
 class Cell:
+    size = 75
+
     def __init__(self, cell_type, y, x):
         self.cell_type = cell_type
-        self.size = 75
+        self.size = Cell.size
         self.y = y
         self.x = x
 
@@ -84,7 +86,9 @@ class Field:
 
     def __init__(self, filename):
         filename = "data/" + filename + '.txt'
-        self.cell_size = 75
+        self.cell_size = Cell.size
+        self.coords_of_ch = []
+        self.active_ch = False
 
         with open(filename, 'r') as map_file:
             self.field_map = list(map(list, map(str.rstrip, map_file.readlines())))
@@ -126,27 +130,30 @@ class Knight1(pygame.sprite.Sprite):
         self.field_x = x
         self.field_y = y
 
+        self.field.coords_of_ch.append([self.field_x, self.field_y])
         self.picked = False
 
     def update(self, *args):
         if args and args[0].type == pygame.MOUSEBUTTONDOWN:
 
-            if self.field.get_cell(args[0].pos)[0] == self.field_x and self.field.get_cell(args[0].pos)[1] == self.field_y:
+            if self.field.get_cell(args[0].pos)[0] == self.field_x and self.field.get_cell(args[0].pos)[1] == self.field_y and not self.field.active_ch:
                 self.picked = True
+                self.field.active_ch = True
 
             if self.picked is True:
 
-                if self.field.get_cell(args[0].pos)[0] != self.field_x or self.field.get_cell(args[0].pos)[1] != self.field_y:
+                if [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] not in self.field.coords_of_ch:
+                    self.field.coords_of_ch.remove([self.field_x, self.field_y])
+
                     new_pos_x = self.field.get_cell(args[0].pos)[0]
                     new_pos_y = self.field.get_cell(args[0].pos)[1]
                     self.rect = self.rect.move(-((self.field_x - new_pos_x) * 75), -((self.field_y - new_pos_y) * 75))
+                    self.field.coords_of_ch.append([new_pos_x, new_pos_y])
 
                     self.field_x = args[0].pos[0] // 75
                     self.field_y = args[0].pos[1] // 75
                     self.picked = False
-
-                elif self.field.get_cell(args[0].pos)[0] == self.field_x and self.field.get_cell(args[0].pos)[1] == self.field_y:
-                    pass
+                    self.field.active_ch = False
 
 
 clock = pygame.time.Clock()
@@ -155,8 +162,8 @@ if __name__ == '__main__':
 
     pygame.init()
 
-    size = WIDTH, HEIGHT = 750, 750
-    screen = pygame.display.set_mode(size)
+    screen_size = WIDTH, HEIGHT = 750, 750
+    screen = pygame.display.set_mode(screen_size)
     start_screen()
 
     field = Field('generation1')
