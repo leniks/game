@@ -25,7 +25,7 @@ def load_image(name, colorkey=None):
 
 def start_screen():
     intro_text = ["123", "",
-                  "Правила игры... Честно пока сам не ебу какие правила"]
+                  "Правила игры..."]
 
     fon = pygame.transform.scale(load_image('fon1.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
