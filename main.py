@@ -1,5 +1,6 @@
 import pygame
 import os
+import sys
 
 
 def load_image(name, colorkey=None):
@@ -24,14 +25,14 @@ def load_image(name, colorkey=None):
 
 def start_screen():
     intro_text = ["123", "",
-                  "Правила игры..."]
+                  "Правила игры... Честно пока сам не ебу какие правила"]
 
     fon = pygame.transform.scale(load_image('fon1.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
     font = pygame.font.Font(None, 30)
     text_coord = 50
     for line in intro_text:
-        string_rendered = font.render(line, 1, pygame.Color('white'))
+        string_rendered = font.render(line, True, pygame.Color('white'))
         intro_rect = string_rendered.get_rect()
         text_coord += 10
         intro_rect.top = text_coord
@@ -144,7 +145,7 @@ class Knight1(pygame.sprite.Sprite):
 
 
 clock = pygame.time.Clock()
-FPS = 120
+FPS = 60
 if __name__ == '__main__':
 
     pygame.init()
@@ -152,19 +153,24 @@ if __name__ == '__main__':
     size = WIDTH, HEIGHT = 750, 750
     screen = pygame.display.set_mode(size)
     start_screen()
-    field = Field('generation1')
 
+    field = Field('generation1')
     knights = pygame.sprite.Group()
     for i in range(1, 9):
         knight = Knight1(field, 1, i, knights)
+
     running = True
     while running:
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 knights.update(event)
-        screen.fill((0, 0, 0))
+
+        clock.tick(FPS)
+
         field.render(screen)
         knights.draw(screen)
         pygame.display.flip()
