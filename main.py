@@ -87,8 +87,12 @@ class Field:
     def __init__(self, filename):
         filename = "data/" + filename + '.txt'
         self.cell_size = Cell.size
-        self.coords_of_ch = []
+
+        self.coords_of_ch_team1 = []
+        self.coords_of_ch_team2 = []
         self.active_ch = False
+        self.active_ch_x = 0
+        self.active_ch_y = 0
 
         with open(filename, 'r') as map_file:
             self.field_map = list(map(list, map(str.rstrip, map_file.readlines())))
@@ -97,14 +101,43 @@ class Field:
             for x in range(len(self.field_map[0])):
                 self.field_map[y][x] = Cell(int(self.field_map[y][x]), y * self.cell_size, x * self.cell_size)
 
-    def render(self, screen):
+    def render(self, screen, picked, x_picked=0, y_picked=0):
 
         for field_y in range(len(self.field_map)):
             for field_x in range(len(self.field_map[0])):
                 screen.blit(self.field_map[field_y][field_x].image, (self.field_map[field_y][field_x].x,
                                                                      self.field_map[field_y][field_x].y))
-                pygame.draw.rect(screen, pygame.Color('white'),
+                pygame.draw.rect(screen, pygame.Color('black'),
                                  (self.field_map[field_y][field_x].x, self.field_map[field_y][field_x].y, self.cell_size, self.cell_size), 1)
+
+        if picked:
+
+            if x_picked - 1 >= 0 and y_picked - 1 >= 0:
+                pygame.draw.rect(screen, pygame.Color('white'),
+                                 (self.field_map[y_picked - 1][x_picked - 1].x, self.field_map[y_picked - 1][x_picked - 1].y, self.cell_size, self.cell_size), 1)
+            if y_picked - 1 >= 0:
+                pygame.draw.rect(screen, pygame.Color('white'),
+                                 (self.field_map[y_picked - 1][x_picked].x, self.field_map[y_picked - 1][x_picked].y, self.cell_size, self.cell_size), 1)
+            if y_picked - 1 >= 0 and x_picked + 1 < len(self.field_map[0]):
+                pygame.draw.rect(screen, pygame.Color('white'),
+                                 (self.field_map[y_picked - 1][x_picked + 1].x, self.field_map[y_picked - 1][x_picked + 1].y, self.cell_size, self.cell_size), 1)
+
+            if x_picked - 1 >= 0:
+                pygame.draw.rect(screen, pygame.Color('white'),
+                                 (self.field_map[y_picked][x_picked - 1].x, self.field_map[y_picked][x_picked - 1].y, self.cell_size, self.cell_size), 1)
+            if x_picked + 1 < len(self.field_map[0]):
+                pygame.draw.rect(screen, pygame.Color('white'),
+                                 (self.field_map[y_picked][x_picked + 1].x, self.field_map[y_picked][x_picked + 1].y, self.cell_size, self.cell_size), 1)
+
+            if x_picked - 1 >= 0 and y_picked + 1 < len(self.field_map):
+                pygame.draw.rect(screen, pygame.Color('white'),
+                                 (self.field_map[y_picked + 1][x_picked - 1].x, self.field_map[y_picked + 1][x_picked - 1].y, self.cell_size, self.cell_size), 1)
+            if y_picked + 1 < len(self.field_map):
+                pygame.draw.rect(screen, pygame.Color('white'),
+                                 (self.field_map[y_picked + 1][x_picked].x, self.field_map[y_picked + 1][x_picked].y, self.cell_size, self.cell_size), 1)
+            if y_picked + 1 < len(self.field_map) and x_picked + 1 < len(self.field_map[0]):
+                pygame.draw.rect(screen, pygame.Color('white'),
+                                 (self.field_map[y_picked + 1][x_picked + 1].x, self.field_map[y_picked + 1][x_picked + 1].y, self.cell_size, self.cell_size), 1)
 
     def get_cell(self, mouse_pos):
 
@@ -130,7 +163,7 @@ class Knight1(pygame.sprite.Sprite):
         self.field_x = x
         self.field_y = y
 
-        self.field.coords_of_ch.append([self.field_x, self.field_y])
+        self.field.coords_of_ch_team1.append([self.field_x, self.field_y])
         self.picked = False
 
     def update(self, *args):
@@ -139,21 +172,26 @@ class Knight1(pygame.sprite.Sprite):
             if self.field.get_cell(args[0].pos)[0] == self.field_x and self.field.get_cell(args[0].pos)[1] == self.field_y and not self.field.active_ch:
                 self.picked = True
                 self.field.active_ch = True
+                self.field.active_ch_x = self.field.get_cell(args[0].pos)[0]
+                self.field.active_ch_y = self.field.get_cell(args[0].pos)[1]
 
             if self.picked is True:
 
-                if [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] not in self.field.coords_of_ch:
-                    self.field.coords_of_ch.remove([self.field_x, self.field_y])
+                if [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] not in self.field.coords_of_ch_team1:
 
-                    new_pos_x = self.field.get_cell(args[0].pos)[0]
-                    new_pos_y = self.field.get_cell(args[0].pos)[1]
-                    self.rect = self.rect.move(-((self.field_x - new_pos_x) * 75), -((self.field_y - new_pos_y) * 75))
-                    self.field.coords_of_ch.append([new_pos_x, new_pos_y])
+                    if abs(self.field_x - self.field.get_cell(args[0].pos)[0]) <= 1 and abs(self.field_y - self.field.get_cell(args[0].pos)[1]) <= 1:
 
-                    self.field_x = args[0].pos[0] // 75
-                    self.field_y = args[0].pos[1] // 75
-                    self.picked = False
-                    self.field.active_ch = False
+                        self.field.coords_of_ch_team1.remove([self.field_x, self.field_y])
+
+                        new_pos_x = self.field.get_cell(args[0].pos)[0]
+                        new_pos_y = self.field.get_cell(args[0].pos)[1]
+                        self.rect = self.rect.move(-((self.field_x - new_pos_x) * Cell.size), -((self.field_y - new_pos_y) * Cell.size))
+                        self.field.coords_of_ch_team1.append([new_pos_x, new_pos_y])
+
+                        self.field_x = new_pos_x
+                        self.field_y = new_pos_y
+                        self.picked = False
+                        self.field.active_ch = False
 
 
 clock = pygame.time.Clock()
@@ -162,7 +200,7 @@ if __name__ == '__main__':
 
     pygame.init()
 
-    screen_size = WIDTH, HEIGHT = 750, 750
+    screen_size = WIDTH, HEIGHT = 750, 850
     screen = pygame.display.set_mode(screen_size)
     start_screen()
 
@@ -183,6 +221,7 @@ if __name__ == '__main__':
 
         clock.tick(FPS)
 
-        field.render(screen)
+        screen.fill(pygame.Color('black'))
+        field.render(screen, field.active_ch, field.active_ch_x, field.active_ch_y)
         knights.draw(screen)
         pygame.display.flip()
