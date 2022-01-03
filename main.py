@@ -91,6 +91,7 @@ class Field:
         self.coords_of_ch_team1 = []
         self.coords_of_ch_team2 = []
         self.active_ch = False
+        self.attacked = False
         self.active_ch_x = 0
         self.active_ch_y = 0
 
@@ -171,7 +172,9 @@ class Knight1(pygame.sprite.Sprite):
     def update(self, *args):
         if args and args[0].type == pygame.MOUSEBUTTONDOWN:
 
-            if self.field.get_cell(args[0].pos)[0] == self.field_x and self.field.get_cell(args[0].pos)[1] == self.field_y and not self.field.active_ch:
+            if self.field.get_cell(args[0].pos)[0] == self.field_x \
+                    and self.field.get_cell(args[0].pos)[1] == self.field_y \
+                    and not self.field.active_ch and not self.field.attacked:
                 self.picked = True
                 self.field.active_ch = True
                 self.field.active_ch_x = self.field.get_cell(args[0].pos)[0]
@@ -198,6 +201,15 @@ class Knight1(pygame.sprite.Sprite):
                         self.picked = False
                         self.field.active_ch = False
 
+                if [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
+                        not in self.field.coords_of_ch_team1 and \
+                        [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
+                        in self.field.coords_of_ch_team2:
+                    print('attack')
+                    self.picked = False
+                    self.field.active_ch = False
+                    self.field.attacked = True
+
 
 class Knight2(pygame.sprite.Sprite):
 
@@ -220,7 +232,9 @@ class Knight2(pygame.sprite.Sprite):
     def update(self, *args):
         if args and args[0].type == pygame.MOUSEBUTTONDOWN:
 
-            if self.field.get_cell(args[0].pos)[0] == self.field_x and self.field.get_cell(args[0].pos)[1] == self.field_y and not self.field.active_ch:
+            if self.field.get_cell(args[0].pos)[0] == self.field_x \
+                    and self.field.get_cell(args[0].pos)[1] == self.field_y \
+                    and not self.field.active_ch and not self.field.attacked:
                 self.picked = True
                 self.field.active_ch = True
                 self.field.active_ch_x = self.field.get_cell(args[0].pos)[0]
@@ -247,6 +261,16 @@ class Knight2(pygame.sprite.Sprite):
                         self.field_y = new_pos_y
                         self.picked = False
                         self.field.active_ch = False
+
+                if [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
+                        not in self.field.coords_of_ch_team2 and \
+                        [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
+                        in self.field.coords_of_ch_team1:
+                    print('attack')
+
+                    self.picked = False
+                    self.field.active_ch = False
+                    self.field.attacked = True
 
 
 clock = pygame.time.Clock()
@@ -276,6 +300,7 @@ if __name__ == '__main__':
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 knights.update(event)
+                field.attacked = False
 
         clock.tick(FPS)
 
