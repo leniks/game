@@ -32,7 +32,7 @@ def start_screen():
     font = pygame.font.Font(None, 30)
     text_coord = 50
     for line in intro_text:
-        string_rendered = font.render(line, True, pygame.Color('white'))
+        string_rendered = font.render(line, True, pygame.Color('black'))
         intro_rect = string_rendered.get_rect()
         text_coord += 10
         intro_rect.top = text_coord
@@ -166,6 +166,8 @@ class Knight1(pygame.sprite.Sprite):
         self.field.coords_of_ch_team1.append([self.field_x, self.field_y])
         self.picked = False
 
+        self.health = 10
+
     def update(self, *args):
         if args and args[0].type == pygame.MOUSEBUTTONDOWN:
 
@@ -177,7 +179,10 @@ class Knight1(pygame.sprite.Sprite):
 
             if self.picked is True:
 
-                if [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] not in self.field.coords_of_ch_team1:
+                if [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
+                        not in self.field.coords_of_ch_team1 and \
+                        [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
+                        not in self.field.coords_of_ch_team2:
 
                     if abs(self.field_x - self.field.get_cell(args[0].pos)[0]) <= 1 and abs(self.field_y - self.field.get_cell(args[0].pos)[1]) <= 1:
 
@@ -194,8 +199,59 @@ class Knight1(pygame.sprite.Sprite):
                         self.field.active_ch = False
 
 
+class Knight2(pygame.sprite.Sprite):
+
+    def __init__(self, field, x, y, *group, ):
+        super().__init__(*group)
+        self.image = pygame.transform.flip(load_image('knight.png', -1), True, False)
+
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = field.cell_size * x + field.cell_size // 4, field.cell_size * y + field.cell_size // 4
+
+        self.field = field
+        self.field_x = x
+        self.field_y = y
+
+        self.field.coords_of_ch_team2.append([self.field_x, self.field_y])
+        self.picked = False
+
+        self.health = 10
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN:
+
+            if self.field.get_cell(args[0].pos)[0] == self.field_x and self.field.get_cell(args[0].pos)[1] == self.field_y and not self.field.active_ch:
+                self.picked = True
+                self.field.active_ch = True
+                self.field.active_ch_x = self.field.get_cell(args[0].pos)[0]
+                self.field.active_ch_y = self.field.get_cell(args[0].pos)[1]
+
+            if self.picked is True:
+
+                if [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
+                        not in self.field.coords_of_ch_team2 and \
+                        [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
+                        not in self.field.coords_of_ch_team1:
+
+                    if abs(self.field_x - self.field.get_cell(args[0].pos)[0]) <= 1 and abs(
+                            self.field_y - self.field.get_cell(args[0].pos)[1]) <= 1:
+                        self.field.coords_of_ch_team2.remove([self.field_x, self.field_y])
+
+                        new_pos_x = self.field.get_cell(args[0].pos)[0]
+                        new_pos_y = self.field.get_cell(args[0].pos)[1]
+                        self.rect = self.rect.move(-((self.field_x - new_pos_x) * Cell.size),
+                                                   -((self.field_y - new_pos_y) * Cell.size))
+                        self.field.coords_of_ch_team2.append([new_pos_x, new_pos_y])
+
+                        self.field_x = new_pos_x
+                        self.field_y = new_pos_y
+                        self.picked = False
+                        self.field.active_ch = False
+
+
 clock = pygame.time.Clock()
 FPS = 60
+
 if __name__ == '__main__':
 
     pygame.init()
@@ -207,7 +263,9 @@ if __name__ == '__main__':
     field = Field('generation1')
     knights = pygame.sprite.Group()
     for i in range(1, 9):
-        knight = Knight1(field, 1, i, knights)
+        knight = Knight1(field, 2, i, knights)
+    for i in range(1, 9):
+        knight = Knight2(field, 7, i, knights)
 
     running = True
     while running:
