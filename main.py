@@ -43,7 +43,7 @@ def start_screen():
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                terminate()
+                pygame.terminate()
             elif event.type == pygame.KEYDOWN or \
                     event.type == pygame.MOUSEBUTTONDOWN:
                 return  # начинаем игру
@@ -52,6 +52,14 @@ def start_screen():
 
 
 class Cell:
+
+    """
+    size - размер клетки в пикселях
+    cell_type - тип клетки целочисленный
+    y, x - координаты клетки в пикселях
+    image - картинка клетки (поверхность)
+    """
+
     size = 75
 
     def __init__(self, cell_type, y, x):
@@ -83,13 +91,25 @@ class Cell:
 
 
 class Field:
+    """
+    cell_size - размер клетки целочисленный
+    team1 - словарь с юнитами и их координатами для первой команды
+    team2 - словарь с юнитами и их координатами для второй команды
 
+    active_ch - наличие активного персонажа на карте
+    attacked - была ли произведена атака
+    (для предотвращения множественных выборов юнитов из-за того, что после каждого клика по полю проверяются все юниты)
+
+    active_ch_x, active_ch_y - координаты в номерах клеток поля
+    field_map - список из объектов cell, создающийся по ранее сгенерированному текстовому файлу
+    """
     def __init__(self, filename):
         filename = "data/" + filename + '.txt'
         self.cell_size = Cell.size
 
-        self.coords_of_ch_team1 = []
-        self.coords_of_ch_team2 = []
+        self.team1 = {}
+        self.team2 = {}
+
         self.active_ch = False
         self.attacked = False
         self.active_ch_x = 0
@@ -101,7 +121,11 @@ class Field:
         for y in range(len(self.field_map)):
             for x in range(len(self.field_map[0])):
                 self.field_map[y][x] = Cell(int(self.field_map[y][x]), y * self.cell_size, x * self.cell_size)
-
+    """
+    screen - экран для отображения
+    picked - переменная, проверяющая, выбран ли юнит
+    x_picked, y_picked - координаты выбранного юнита в номерах клеток поля
+    """
     def render(self, screen, picked, x_picked=0, y_picked=0):
 
         for field_y in range(len(self.field_map)):
@@ -139,7 +163,9 @@ class Field:
             if y_picked + 1 < len(self.field_map) and x_picked + 1 < len(self.field_map[0]):
                 pygame.draw.rect(screen, pygame.Color('white'),
                                  (self.field_map[y_picked + 1][x_picked + 1].x, self.field_map[y_picked + 1][x_picked + 1].y, self.cell_size, self.cell_size), 1)
-
+    """
+    возвращает позицию мыши в номерах клеток поля
+    """
     def get_cell(self, mouse_pos):
 
         if mouse_pos[0] < len(self.field_map) * self.cell_size \
@@ -153,7 +179,14 @@ class Field:
 
 
 class Knight1(pygame.sprite.Sprite):
-
+    """
+    field - поле, на котором создаются воины
+    image - картинка воина
+    rect.x, rect.y - координаты модельки воина в пикселях
+    field_x, field_y - координаты воина в номерах клеток
+    picked - выбран ли юнит
+    health - количество здоровья
+    """
     def __init__(self, field, x, y, *group,):
         super().__init__(*group)
         self.image = load_image('knight.png', -1)
@@ -164,7 +197,7 @@ class Knight1(pygame.sprite.Sprite):
         self.field_x = x
         self.field_y = y
 
-        self.field.coords_of_ch_team1.append([self.field_x, self.field_y])
+        self.field.team1[self] = (self.field_x, self.field_y)
         self.picked = False
 
         self.health = 10
@@ -182,30 +215,43 @@ class Knight1(pygame.sprite.Sprite):
 
             if self.picked is True:
 
-                if [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
-                        not in self.field.coords_of_ch_team1 and \
-                        [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
-                        not in self.field.coords_of_ch_team2:
+                if (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
+                        not in self.field.team1.values() and \
+                        (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
+                        not in self.field.team2.values():
 
                     if abs(self.field_x - self.field.get_cell(args[0].pos)[0]) <= 1 and abs(self.field_y - self.field.get_cell(args[0].pos)[1]) <= 1:
-
-                        self.field.coords_of_ch_team1.remove([self.field_x, self.field_y])
 
                         new_pos_x = self.field.get_cell(args[0].pos)[0]
                         new_pos_y = self.field.get_cell(args[0].pos)[1]
                         self.rect = self.rect.move(-((self.field_x - new_pos_x) * Cell.size), -((self.field_y - new_pos_y) * Cell.size))
-                        self.field.coords_of_ch_team1.append([new_pos_x, new_pos_y])
+                        self.field.team1[self] = (new_pos_x, new_pos_y)
 
                         self.field_x = new_pos_x
                         self.field_y = new_pos_y
                         self.picked = False
                         self.field.active_ch = False
 
-                if [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
-                        not in self.field.coords_of_ch_team1 and \
-                        [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
-                        in self.field.coords_of_ch_team2:
-                    print('attack')
+                if (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
+                        not in self.field.team1.values() and \
+                        (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
+                        in self.field.team2.values():
+
+                    attack_x = self.field.get_cell(args[0].pos)[0]
+                    attack_y = self.field.get_cell(args[0].pos)[1]
+
+                    attacked_ch = None
+
+                    for key, val in self.field.team2.items():
+                        if val == (attack_x, attack_y):
+                            attacked_ch = key
+                            break
+
+                    attacked_ch.health -= 4
+
+                    print(self.field.team2[attacked_ch])
+                    print(attacked_ch.health)
+
                     self.picked = False
                     self.field.active_ch = False
                     self.field.attacked = True
@@ -224,7 +270,7 @@ class Knight2(pygame.sprite.Sprite):
         self.field_x = x
         self.field_y = y
 
-        self.field.coords_of_ch_team2.append([self.field_x, self.field_y])
+        self.field.team2[self] = (self.field_x, self.field_y)
         self.picked = False
 
         self.health = 10
@@ -242,36 +288,44 @@ class Knight2(pygame.sprite.Sprite):
 
             if self.picked is True:
 
-                if [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
-                        not in self.field.coords_of_ch_team2 and \
-                        [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
-                        not in self.field.coords_of_ch_team1:
+                if (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
+                        not in self.field.team2.values() and \
+                        (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
+                        not in self.field.team1.values():
 
                     if abs(self.field_x - self.field.get_cell(args[0].pos)[0]) <= 1 and abs(
                             self.field_y - self.field.get_cell(args[0].pos)[1]) <= 1:
-                        self.field.coords_of_ch_team2.remove([self.field_x, self.field_y])
 
                         new_pos_x = self.field.get_cell(args[0].pos)[0]
                         new_pos_y = self.field.get_cell(args[0].pos)[1]
                         self.rect = self.rect.move(-((self.field_x - new_pos_x) * Cell.size),
                                                    -((self.field_y - new_pos_y) * Cell.size))
-                        self.field.coords_of_ch_team2.append([new_pos_x, new_pos_y])
+                        self.field.team2[self] = (new_pos_x, new_pos_y)
 
                         self.field_x = new_pos_x
                         self.field_y = new_pos_y
                         self.picked = False
                         self.field.active_ch = False
 
-                if [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
-                        not in self.field.coords_of_ch_team2 and \
-                        [self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]] \
-                        in self.field.coords_of_ch_team1:
-                    print('attack')
+                if (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
+                        not in self.field.team2.values() and \
+                        (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
+                        in self.field.team1.values():
+                    attack_x = self.field.get_cell(args[0].pos)[0]
+                    attack_y = self.field.get_cell(args[0].pos)[1]
+
+                    attacked_ch = None
+
+                    for key, val in self.field.team1.items():
+                        if val == (attack_x, attack_y):
+                            attacked_ch = key
+                            break
+
+                    attacked_ch.health -= 4
 
                     self.picked = False
                     self.field.active_ch = False
                     self.field.attacked = True
-
 
 clock = pygame.time.Clock()
 FPS = 60
