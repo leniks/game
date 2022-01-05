@@ -52,7 +52,6 @@ def start_screen():
 
 
 class Cell:
-
     """
     size - размер клетки в пикселях
     cell_type - тип клетки целочисленный
@@ -103,6 +102,7 @@ class Field:
     active_ch_x, active_ch_y - координаты в номерах клеток поля
     field_map - список из объектов cell, создающийся по ранее сгенерированному текстовому файлу
     """
+
     def __init__(self, filename):
         filename = "data/" + filename + '.txt'
         self.cell_size = Cell.size
@@ -121,11 +121,13 @@ class Field:
         for y in range(len(self.field_map)):
             for x in range(len(self.field_map[0])):
                 self.field_map[y][x] = Cell(int(self.field_map[y][x]), y * self.cell_size, x * self.cell_size)
+
     """
     screen - экран для отображения
     picked - переменная, проверяющая, выбран ли юнит
     x_picked, y_picked - координаты выбранного юнита в номерах клеток поля
     """
+
     def render(self, screen, picked, x_picked=0, y_picked=0):
 
         for field_y in range(len(self.field_map)):
@@ -133,39 +135,55 @@ class Field:
                 screen.blit(self.field_map[field_y][field_x].image, (self.field_map[field_y][field_x].x,
                                                                      self.field_map[field_y][field_x].y))
                 pygame.draw.rect(screen, pygame.Color('black'),
-                                 (self.field_map[field_y][field_x].x, self.field_map[field_y][field_x].y, self.cell_size, self.cell_size), 1)
+                                 (self.field_map[field_y][field_x].x, self.field_map[field_y][field_x].y,
+                                  self.cell_size, self.cell_size), 1)
 
         if picked:
 
             if x_picked - 1 >= 0 and y_picked - 1 >= 0:
                 pygame.draw.rect(screen, pygame.Color('white'),
-                                 (self.field_map[y_picked - 1][x_picked - 1].x, self.field_map[y_picked - 1][x_picked - 1].y, self.cell_size, self.cell_size), 1)
+                                 (self.field_map[y_picked - 1][x_picked - 1].x,
+                                  self.field_map[y_picked - 1][x_picked - 1].y, self.cell_size, self.cell_size), 1)
+
             if y_picked - 1 >= 0:
                 pygame.draw.rect(screen, pygame.Color('white'),
-                                 (self.field_map[y_picked - 1][x_picked].x, self.field_map[y_picked - 1][x_picked].y, self.cell_size, self.cell_size), 1)
+                                 (self.field_map[y_picked - 1][x_picked].x, self.field_map[y_picked - 1][x_picked].y,
+                                  self.cell_size, self.cell_size), 1)
+
             if y_picked - 1 >= 0 and x_picked + 1 < len(self.field_map[0]):
                 pygame.draw.rect(screen, pygame.Color('white'),
-                                 (self.field_map[y_picked - 1][x_picked + 1].x, self.field_map[y_picked - 1][x_picked + 1].y, self.cell_size, self.cell_size), 1)
+                                 (self.field_map[y_picked - 1][x_picked + 1].x,
+                                  self.field_map[y_picked - 1][x_picked + 1].y, self.cell_size, self.cell_size), 1)
 
             if x_picked - 1 >= 0:
                 pygame.draw.rect(screen, pygame.Color('white'),
-                                 (self.field_map[y_picked][x_picked - 1].x, self.field_map[y_picked][x_picked - 1].y, self.cell_size, self.cell_size), 1)
+                                 (self.field_map[y_picked][x_picked - 1].x, self.field_map[y_picked][x_picked - 1].y,
+                                  self.cell_size, self.cell_size), 1)
+
             if x_picked + 1 < len(self.field_map[0]):
                 pygame.draw.rect(screen, pygame.Color('white'),
-                                 (self.field_map[y_picked][x_picked + 1].x, self.field_map[y_picked][x_picked + 1].y, self.cell_size, self.cell_size), 1)
+                                 (self.field_map[y_picked][x_picked + 1].x, self.field_map[y_picked][x_picked + 1].y,
+                                  self.cell_size, self.cell_size), 1)
 
             if x_picked - 1 >= 0 and y_picked + 1 < len(self.field_map):
                 pygame.draw.rect(screen, pygame.Color('white'),
-                                 (self.field_map[y_picked + 1][x_picked - 1].x, self.field_map[y_picked + 1][x_picked - 1].y, self.cell_size, self.cell_size), 1)
+                                 (self.field_map[y_picked + 1][x_picked - 1].x,
+                                  self.field_map[y_picked + 1][x_picked - 1].y, self.cell_size, self.cell_size), 1)
+
             if y_picked + 1 < len(self.field_map):
                 pygame.draw.rect(screen, pygame.Color('white'),
-                                 (self.field_map[y_picked + 1][x_picked].x, self.field_map[y_picked + 1][x_picked].y, self.cell_size, self.cell_size), 1)
+                                 (self.field_map[y_picked + 1][x_picked].x, self.field_map[y_picked + 1][x_picked].y,
+                                  self.cell_size, self.cell_size), 1)
+
             if y_picked + 1 < len(self.field_map) and x_picked + 1 < len(self.field_map[0]):
                 pygame.draw.rect(screen, pygame.Color('white'),
-                                 (self.field_map[y_picked + 1][x_picked + 1].x, self.field_map[y_picked + 1][x_picked + 1].y, self.cell_size, self.cell_size), 1)
+                                 (self.field_map[y_picked + 1][x_picked + 1].x,
+                                  self.field_map[y_picked + 1][x_picked + 1].y, self.cell_size, self.cell_size), 1)
+
     """
     возвращает позицию мыши в номерах клеток поля
     """
+
     def get_cell(self, mouse_pos):
 
         if mouse_pos[0] < len(self.field_map) * self.cell_size \
@@ -186,12 +204,15 @@ class Knight1(pygame.sprite.Sprite):
     field_x, field_y - координаты воина в номерах клеток
     picked - выбран ли юнит
     health - количество здоровья
+    mouse_pos_x, mouse_pos_y - позиция мыши при ходе в номерах клеток
     """
-    def __init__(self, field, x, y, *group,):
+
+    def __init__(self, field, x, y, *group, ):
         super().__init__(*group)
         self.image = load_image('knight.png', -1)
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = field.cell_size * x + field.cell_size // 4, field.cell_size * y + field.cell_size // 4
+        self.rect.x, self.rect.y = field.cell_size * x + field.cell_size // 4, \
+            field.cell_size * y + field.cell_size // 4
 
         self.field = field
         self.field_x = x
@@ -201,44 +222,41 @@ class Knight1(pygame.sprite.Sprite):
         self.picked = False
 
         self.health = 10
+        self.alive = True
 
     def update(self, *args):
         if args and args[0].type == pygame.MOUSEBUTTONDOWN:
 
-            if self.field.get_cell(args[0].pos)[0] == self.field_x \
-                    and self.field.get_cell(args[0].pos)[1] == self.field_y \
-                    and not self.field.active_ch and not self.field.attacked:
+            mouse_pos_x = self.field.get_cell(args[0].pos)[0]
+            mouse_pos_y = self.field.get_cell(args[0].pos)[1]
+
+            if mouse_pos_x == self.field_x and mouse_pos_y == self.field_y \
+                    and not self.field.active_ch and not self.field.attacked and self.alive:
                 self.picked = True
                 self.field.active_ch = True
-                self.field.active_ch_x = self.field.get_cell(args[0].pos)[0]
-                self.field.active_ch_y = self.field.get_cell(args[0].pos)[1]
+                self.field.active_ch_x = mouse_pos_x
+                self.field.active_ch_y = mouse_pos_y
 
-            if self.picked is True:
+            if self.picked:
 
-                if (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
-                        not in self.field.team1.values() and \
-                        (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
+                if (mouse_pos_x, mouse_pos_y) not in self.field.team1.values() and (mouse_pos_x, mouse_pos_y) \
                         not in self.field.team2.values():
 
-                    if abs(self.field_x - self.field.get_cell(args[0].pos)[0]) <= 1 and abs(self.field_y - self.field.get_cell(args[0].pos)[1]) <= 1:
+                    if abs(self.field_x - mouse_pos_x) <= 1 and abs(self.field_y - mouse_pos_y) <= 1:
+                        self.rect = self.rect.move(-((self.field_x - mouse_pos_x) * Cell.size),
+                                                   -((self.field_y - mouse_pos_y) * Cell.size))
+                        self.field.team1[self] = (mouse_pos_x, mouse_pos_y)
 
-                        new_pos_x = self.field.get_cell(args[0].pos)[0]
-                        new_pos_y = self.field.get_cell(args[0].pos)[1]
-                        self.rect = self.rect.move(-((self.field_x - new_pos_x) * Cell.size), -((self.field_y - new_pos_y) * Cell.size))
-                        self.field.team1[self] = (new_pos_x, new_pos_y)
-
-                        self.field_x = new_pos_x
-                        self.field_y = new_pos_y
+                        self.field_x = mouse_pos_x
+                        self.field_y = mouse_pos_y
                         self.picked = False
                         self.field.active_ch = False
 
-                if (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
-                        not in self.field.team1.values() and \
-                        (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
+                if (mouse_pos_x, mouse_pos_y) not in self.field.team1.values() and (mouse_pos_x, mouse_pos_y) \
                         in self.field.team2.values():
 
-                    attack_x = self.field.get_cell(args[0].pos)[0]
-                    attack_y = self.field.get_cell(args[0].pos)[1]
+                    attack_x = mouse_pos_x
+                    attack_y = mouse_pos_y
 
                     attacked_ch = None
 
@@ -247,14 +265,25 @@ class Knight1(pygame.sprite.Sprite):
                             attacked_ch = key
                             break
 
-                    attacked_ch.health -= 4
+                    if attacked_ch.alive is True:
+                        attacked_ch.health -= 4
+                        if attacked_ch.health <= 0:
+                            attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
+                            attacked_ch.alive = False
 
-                    print(self.field.team2[attacked_ch])
-                    print(attacked_ch.health)
+                        self.picked = False
+                        self.field.active_ch = False
+                        self.field.attacked = True
 
-                    self.picked = False
-                    self.field.active_ch = False
-                    self.field.attacked = True
+                    else:
+                        self.rect = self.rect.move(-((self.field_x - mouse_pos_x) * Cell.size),
+                                                   -((self.field_y - mouse_pos_y) * Cell.size))
+                        self.field.team1[self] = (mouse_pos_x, mouse_pos_y)
+
+                        self.field_x = mouse_pos_x
+                        self.field_y = mouse_pos_y
+                        self.picked = False
+                        self.field.active_ch = False
 
 
 class Knight2(pygame.sprite.Sprite):
@@ -264,7 +293,8 @@ class Knight2(pygame.sprite.Sprite):
         self.image = pygame.transform.flip(load_image('knight.png', -1), True, False)
 
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = field.cell_size * x + field.cell_size // 4, field.cell_size * y + field.cell_size // 4
+        self.rect.x, self.rect.y = field.cell_size * x + field.cell_size // 4, \
+            field.cell_size * y + field.cell_size // 4
 
         self.field = field
         self.field_x = x
@@ -274,45 +304,40 @@ class Knight2(pygame.sprite.Sprite):
         self.picked = False
 
         self.health = 10
+        self.alive = True
 
     def update(self, *args):
         if args and args[0].type == pygame.MOUSEBUTTONDOWN:
 
-            if self.field.get_cell(args[0].pos)[0] == self.field_x \
-                    and self.field.get_cell(args[0].pos)[1] == self.field_y \
-                    and not self.field.active_ch and not self.field.attacked:
+            mouse_pos_x = self.field.get_cell(args[0].pos)[0]
+            mouse_pos_y = self.field.get_cell(args[0].pos)[1]
+
+            if mouse_pos_x == self.field_x and mouse_pos_y == self.field_y \
+                    and not self.field.active_ch and not self.field.attacked and self.alive:
                 self.picked = True
                 self.field.active_ch = True
-                self.field.active_ch_x = self.field.get_cell(args[0].pos)[0]
-                self.field.active_ch_y = self.field.get_cell(args[0].pos)[1]
+                self.field.active_ch_x = mouse_pos_x
+                self.field.active_ch_y = mouse_pos_y
 
             if self.picked is True:
 
-                if (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
-                        not in self.field.team2.values() and \
-                        (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
+                if (mouse_pos_x, mouse_pos_y) not in self.field.team2.values() and (mouse_pos_x, mouse_pos_y) \
                         not in self.field.team1.values():
 
-                    if abs(self.field_x - self.field.get_cell(args[0].pos)[0]) <= 1 and abs(
-                            self.field_y - self.field.get_cell(args[0].pos)[1]) <= 1:
+                    if abs(self.field_x - mouse_pos_x) <= 1 and abs(self.field_y - mouse_pos_y) <= 1:
+                        self.rect = self.rect.move(-((self.field_x - mouse_pos_x) * Cell.size),
+                                                   -((self.field_y - mouse_pos_y) * Cell.size))
+                        self.field.team2[self] = (mouse_pos_x, mouse_pos_y)
 
-                        new_pos_x = self.field.get_cell(args[0].pos)[0]
-                        new_pos_y = self.field.get_cell(args[0].pos)[1]
-                        self.rect = self.rect.move(-((self.field_x - new_pos_x) * Cell.size),
-                                                   -((self.field_y - new_pos_y) * Cell.size))
-                        self.field.team2[self] = (new_pos_x, new_pos_y)
-
-                        self.field_x = new_pos_x
-                        self.field_y = new_pos_y
+                        self.field_x = mouse_pos_x
+                        self.field_y = mouse_pos_y
                         self.picked = False
                         self.field.active_ch = False
 
-                if (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
-                        not in self.field.team2.values() and \
-                        (self.field.get_cell(args[0].pos)[0], self.field.get_cell(args[0].pos)[1]) \
+                if (mouse_pos_x, mouse_pos_y) not in self.field.team2.values() and (mouse_pos_x, mouse_pos_y) \
                         in self.field.team1.values():
-                    attack_x = self.field.get_cell(args[0].pos)[0]
-                    attack_y = self.field.get_cell(args[0].pos)[1]
+                    attack_x = mouse_pos_x
+                    attack_y = mouse_pos_y
 
                     attacked_ch = None
 
@@ -321,11 +346,26 @@ class Knight2(pygame.sprite.Sprite):
                             attacked_ch = key
                             break
 
-                    attacked_ch.health -= 4
+                    if attacked_ch.alive is True:
+                        attacked_ch.health -= 4
+                        if attacked_ch.health <= 0:
+                            attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
+                            attacked_ch.alive = False
 
-                    self.picked = False
-                    self.field.active_ch = False
-                    self.field.attacked = True
+                        self.picked = False
+                        self.field.active_ch = False
+                        self.field.attacked = True
+
+                    else:
+                        self.rect = self.rect.move(-((self.field_x - mouse_pos_x) * Cell.size),
+                                                   -((self.field_y - mouse_pos_y) * Cell.size))
+                        self.field.team1[self] = (mouse_pos_x, mouse_pos_y)
+
+                        self.field_x = mouse_pos_x
+                        self.field_y = mouse_pos_y
+                        self.picked = False
+                        self.field.active_ch = False
+
 
 clock = pygame.time.Clock()
 FPS = 60
