@@ -24,28 +24,55 @@ def load_image(name, colorkey=None):
 
 
 def start_screen():
-    intro_text = ["123", "",
-                  "Правила игры..."]
-
     fon = pygame.transform.scale(load_image('fon1.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
-    font = pygame.font.Font(None, 30)
-    text_coord = 50
-    for line in intro_text:
-        string_rendered = font.render(line, True, pygame.Color('black'))
-        intro_rect = string_rendered.get_rect()
-        text_coord += 10
-        intro_rect.top = text_coord
-        intro_rect.x = 10
-        text_coord += intro_rect.height
-        screen.blit(string_rendered, intro_rect)
+
+    pygame.draw.rect(screen, (140, 97, 48), (300, 150, 400, 100))
+    pygame.draw.rect(screen, (140, 97, 48), (300, 350, 400, 100))
+    pygame.draw.rect(screen, (140, 97, 48), (300, 550, 400, 100))
+
+    text1 = font.render('начать игру', True, (217, 188, 156))
+    text2 = font.render('продолжить игру', True, (217, 188, 156))
+    text3 = font.render("результаты", True, (217, 188, 156))
+
+    screen.blit(text1, (370, 170))
+    screen.blit(text2, (320, 370))
+    screen.blit(text3, (370, 570))
 
     while True:
         for event in pygame.event.get():
+            mouse = pygame.mouse.get_pos()
+
+            if 300 <= mouse[0] <= 700 and 150 <= mouse[1] <= 250:
+                pygame.draw.rect(screen, (140, 150, 48), (300, 150, 400, 100))
+                text1 = font.render('начать игру', True, (217, 188, 156))
+                screen.blit(text1, (370, 170))
+            else:
+                pygame.draw.rect(screen, (140, 97, 48), (300, 150, 400, 100))
+                text1 = font.render('начать игру', True, (217, 188, 156))
+                screen.blit(text1, (370, 170))
+
+            if 300 <= mouse[0] <= 700 and 350 <= mouse[1] <= 450:
+                pygame.draw.rect(screen, (140, 150, 48), (300, 350, 400, 100))
+                text2 = font.render('продолжить игру', True, (217, 188, 156))
+                screen.blit(text2, (320, 370))
+            else:
+                pygame.draw.rect(screen, (140, 97, 48), (300, 350, 400, 100))
+                text2 = font.render('продолжить игру', True, (217, 188, 156))
+                screen.blit(text2, (320, 370))
+
+            if 300 <= mouse[0] <= 700 and 550 <= mouse[1] <= 650:
+                pygame.draw.rect(screen, (140, 150, 48), (300, 550, 400, 100))
+                text3 = font.render("результаты", True, (217, 188, 156))
+                screen.blit(text3, (370, 570))
+            else:
+                pygame.draw.rect(screen, (140, 97, 48), (300, 550, 400, 100))
+                text3 = font.render("результаты", True, (217, 188, 156))
+                screen.blit(text3, (370, 570))
+
             if event.type == pygame.QUIT:
                 pygame.terminate()
-            elif event.type == pygame.KEYDOWN or \
-                    event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 return  # начинаем игру
         pygame.display.flip()
         clock.tick(FPS)
@@ -212,7 +239,7 @@ class Knight1(pygame.sprite.Sprite):
         self.image = load_image('knight.png', -1)
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = field.cell_size * x + field.cell_size // 4, \
-            field.cell_size * y + field.cell_size // 4
+                                   field.cell_size * y + field.cell_size // 4
 
         self.field = field
         self.field_x = x
@@ -294,7 +321,7 @@ class Knight2(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = field.cell_size * x + field.cell_size // 4, \
-            field.cell_size * y + field.cell_size // 4
+                                   field.cell_size * y + field.cell_size // 4
 
         self.field = field
         self.field_x = x
@@ -369,15 +396,17 @@ class Knight2(pygame.sprite.Sprite):
 
 clock = pygame.time.Clock()
 FPS = 60
+pygame.init()
+pygame.display.set_caption('Game')
+screen_size = WIDTH, HEIGHT = 1000, 750
+screen = pygame.display.set_mode(screen_size)
+picture = load_image('trash.png')
+pygame.display.set_icon(picture)
+font = pygame.font.Font('data/21063.otf', 36)
+
 
 if __name__ == '__main__':
-
-    pygame.init()
-
-    screen_size = WIDTH, HEIGHT = 750, 850
-    screen = pygame.display.set_mode(screen_size)
     start_screen()
-
     field = Field('generation1')
     knights = pygame.sprite.Group()
     for i in range(1, 9):
