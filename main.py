@@ -47,6 +47,8 @@ def start_screen():
                 pygame.draw.rect(screen, (140, 150, 48), (300, 150, 400, 100))
                 text1 = font.render('начать игру', True, (217, 188, 156))
                 screen.blit(text1, (370, 170))
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    return  # начинаем игру
             else:
                 pygame.draw.rect(screen, (140, 97, 48), (300, 150, 400, 100))
                 text1 = font.render('начать игру', True, (217, 188, 156))
@@ -72,8 +74,6 @@ def start_screen():
 
             if event.type == pygame.QUIT:
                 pygame.terminate()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                return  # начинаем игру
         pygame.display.flip()
         clock.tick(FPS)
 
