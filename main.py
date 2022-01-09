@@ -238,8 +238,8 @@ class Knight1(pygame.sprite.Sprite):
         super().__init__(*group)
         self.image = load_image('knight.png', -1)
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = field.cell_size * x + field.cell_size // 4, \
-                                   field.cell_size * y + field.cell_size // 4
+        self.rect.x, self.rect.y = \
+            field.cell_size * x + field.cell_size // 4, field.cell_size * y + field.cell_size // 4
 
         self.field = field
         self.field_x = x
@@ -264,7 +264,7 @@ class Knight1(pygame.sprite.Sprite):
                 self.field.active_ch_x = mouse_pos_x
                 self.field.active_ch_y = mouse_pos_y
 
-            if self.picked:
+            if self.picked and (mouse_pos_x, mouse_pos_y) != (self.field_x, self.field_y):
 
                 if (mouse_pos_x, mouse_pos_y) not in self.field.team1.values() and (mouse_pos_x, mouse_pos_y) \
                         not in self.field.team2.values():
@@ -293,7 +293,7 @@ class Knight1(pygame.sprite.Sprite):
                                 attacked_ch = key
                                 break
 
-                        if attacked_ch.alive is True:
+                        if attacked_ch.alive:
                             attacked_ch.health -= 4
                             if attacked_ch.health <= 0:
                                 attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
@@ -321,8 +321,8 @@ class Knight2(pygame.sprite.Sprite):
         self.image = pygame.transform.flip(load_image('knight.png', -1), True, False)
 
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = field.cell_size * x + field.cell_size // 4, \
-                                   field.cell_size * y + field.cell_size // 4
+        self.rect.x, self.rect.y = \
+            field.cell_size * x + field.cell_size // 4, field.cell_size * y + field.cell_size // 4
 
         self.field = field
         self.field_x = x
@@ -347,7 +347,7 @@ class Knight2(pygame.sprite.Sprite):
                 self.field.active_ch_x = mouse_pos_x
                 self.field.active_ch_y = mouse_pos_y
 
-            if self.picked is True:
+            if self.picked and (mouse_pos_x, mouse_pos_y) != (self.field_x, self.field_y):
 
                 if (mouse_pos_x, mouse_pos_y) not in self.field.team2.values() and (mouse_pos_x, mouse_pos_y) \
                         not in self.field.team1.values():
@@ -362,7 +362,7 @@ class Knight2(pygame.sprite.Sprite):
                         self.picked = False
                         self.field.active_ch = False
 
-                if (mouse_pos_x, mouse_pos_y) not in self.field.team2.values() and (mouse_pos_x, mouse_pos_y) \
+                elif (mouse_pos_x, mouse_pos_y) not in self.field.team2.values() and (mouse_pos_x, mouse_pos_y) \
                         in self.field.team1.values():
                     attack_x = mouse_pos_x
                     attack_y = mouse_pos_y
@@ -374,7 +374,7 @@ class Knight2(pygame.sprite.Sprite):
                             attacked_ch = key
                             break
 
-                    if attacked_ch.alive is True:
+                    if attacked_ch.alive:
                         attacked_ch.health -= 4
                         if attacked_ch.health <= 0:
                             attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
