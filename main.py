@@ -367,32 +367,33 @@ class Knight2(pygame.sprite.Sprite):
                     attack_x = mouse_pos_x
                     attack_y = mouse_pos_y
 
-                    attacked_ch = None
+                    if abs(self.field_x - mouse_pos_x) <= 1 and abs(self.field_y - mouse_pos_y) <= 1:
+                        attacked_ch = None
 
-                    for key, val in self.field.team1.items():
-                        if val == (attack_x, attack_y):
-                            attacked_ch = key
-                            break
+                        for key, val in self.field.team1.items():
+                            if val == (attack_x, attack_y):
+                                attacked_ch = key
+                                break
 
-                    if attacked_ch.alive:
-                        attacked_ch.health -= 4
-                        if attacked_ch.health <= 0:
-                            attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
-                            attacked_ch.alive = False
+                        if attacked_ch.alive:
+                            attacked_ch.health -= 4
+                            if attacked_ch.health <= 0:
+                                attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
+                                attacked_ch.alive = False
 
-                        self.picked = False
-                        self.field.active_ch = False
-                        self.field.attacked = True
+                            self.picked = False
+                            self.field.active_ch = False
+                            self.field.attacked = True
 
-                    else:
-                        self.rect = self.rect.move(-((self.field_x - mouse_pos_x) * Cell.size),
-                                                   -((self.field_y - mouse_pos_y) * Cell.size))
-                        self.field.team1[self] = (mouse_pos_x, mouse_pos_y)
+                        else:
+                            self.rect = self.rect.move(-((self.field_x - mouse_pos_x) * Cell.size),
+                                                       -((self.field_y - mouse_pos_y) * Cell.size))
+                            self.field.team1[self] = (mouse_pos_x, mouse_pos_y)
 
-                        self.field_x = mouse_pos_x
-                        self.field_y = mouse_pos_y
-                        self.picked = False
-                        self.field.active_ch = False
+                            self.field_x = mouse_pos_x
+                            self.field_y = mouse_pos_y
+                            self.picked = False
+                            self.field.active_ch = False
 
 
 clock = pygame.time.Clock()
@@ -425,6 +426,24 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEBUTTONDOWN:
                 knights.update(event)
                 field.attacked = False
+
+                sec_win = True
+                for elem in field.team1:
+                    if elem.alive:
+                        sec_win = False
+
+                if sec_win:
+                    print('победила вторая команда')
+                    running = False
+
+                first_win = True
+                for elem in field.team2:
+                    if elem.alive:
+                        first_win = False
+
+                if first_win:
+                    print('победила первая команда')
+                    running = False
 
         clock.tick(FPS)
 
