@@ -73,7 +73,7 @@ def start_screen():
                 screen.blit(text3, (370, 570))
 
             if event.type == pygame.QUIT:
-                pygame.terminate()
+                sys.exit()
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -137,6 +137,7 @@ class Field:
         self.team1 = {}
         self.team2 = {}
 
+        self.first_team_turn = True
         self.active_ch = False
         self.attacked = False
         self.active_ch_x = 0
@@ -257,8 +258,8 @@ class Knight1(pygame.sprite.Sprite):
             mouse_pos_x = self.field.get_cell(args[0].pos)[0]
             mouse_pos_y = self.field.get_cell(args[0].pos)[1]
 
-            if mouse_pos_x == self.field_x and mouse_pos_y == self.field_y \
-                    and not self.field.active_ch and not self.field.attacked and self.alive:
+            if mouse_pos_x == self.field_x and mouse_pos_y == self.field_y and not self.field.active_ch \
+                    and not self.field.attacked and self.alive and self.field.first_team_turn:
                 self.picked = True
                 self.field.active_ch = True
                 self.field.active_ch_x = mouse_pos_x
@@ -278,6 +279,8 @@ class Knight1(pygame.sprite.Sprite):
                         self.field_y = mouse_pos_y
                         self.picked = False
                         self.field.active_ch = False
+
+                        self.field.first_team_turn = not self.field.first_team_turn
 
                 elif (mouse_pos_x, mouse_pos_y) not in self.field.team1.values() and (mouse_pos_x, mouse_pos_y) \
                         in self.field.team2.values():
@@ -303,6 +306,8 @@ class Knight1(pygame.sprite.Sprite):
                             self.field.active_ch = False
                             self.field.attacked = True
 
+                            self.field.first_team_turn = not self.field.first_team_turn
+
                         else:
                             self.rect = self.rect.move(-((self.field_x - mouse_pos_x) * Cell.size),
                                                        -((self.field_y - mouse_pos_y) * Cell.size))
@@ -312,6 +317,8 @@ class Knight1(pygame.sprite.Sprite):
                             self.field_y = mouse_pos_y
                             self.picked = False
                             self.field.active_ch = False
+
+                            self.field.first_team_turn = not self.field.first_team_turn
 
 
 class Knight2(pygame.sprite.Sprite):
@@ -340,8 +347,8 @@ class Knight2(pygame.sprite.Sprite):
             mouse_pos_x = self.field.get_cell(args[0].pos)[0]
             mouse_pos_y = self.field.get_cell(args[0].pos)[1]
 
-            if mouse_pos_x == self.field_x and mouse_pos_y == self.field_y \
-                    and not self.field.active_ch and not self.field.attacked and self.alive:
+            if mouse_pos_x == self.field_x and mouse_pos_y == self.field_y and not self.field.active_ch \
+                    and not self.field.attacked and self.alive and not self.field.first_team_turn:
                 self.picked = True
                 self.field.active_ch = True
                 self.field.active_ch_x = mouse_pos_x
@@ -361,6 +368,8 @@ class Knight2(pygame.sprite.Sprite):
                         self.field_y = mouse_pos_y
                         self.picked = False
                         self.field.active_ch = False
+
+                        self.field.first_team_turn = not self.field.first_team_turn
 
                 elif (mouse_pos_x, mouse_pos_y) not in self.field.team2.values() and (mouse_pos_x, mouse_pos_y) \
                         in self.field.team1.values():
@@ -385,6 +394,8 @@ class Knight2(pygame.sprite.Sprite):
                             self.field.active_ch = False
                             self.field.attacked = True
 
+                            self.field.first_team_turn = not self.field.first_team_turn
+
                         else:
                             self.rect = self.rect.move(-((self.field_x - mouse_pos_x) * Cell.size),
                                                        -((self.field_y - mouse_pos_y) * Cell.size))
@@ -395,19 +406,20 @@ class Knight2(pygame.sprite.Sprite):
                             self.picked = False
                             self.field.active_ch = False
 
-
-clock = pygame.time.Clock()
-FPS = 60
-pygame.init()
-pygame.display.set_caption('Game')
-screen_size = WIDTH, HEIGHT = 1000, 750
-screen = pygame.display.set_mode(screen_size)
-picture = load_image('trash.png')
-pygame.display.set_icon(picture)
-font = pygame.font.Font('data/21063.otf', 36)
+                            self.field.first_team_turn = not self.field.first_team_turn
 
 
 if __name__ == '__main__':
+    clock = pygame.time.Clock()
+    FPS = 60
+    pygame.init()
+    pygame.display.set_caption('Game')
+    screen_size = WIDTH, HEIGHT = 1000, 750
+    screen = pygame.display.set_mode(screen_size)
+    picture = load_image('trash.png')
+    pygame.display.set_icon(picture)
+    font = pygame.font.Font('data/21063.otf', 36)
+
     start_screen()
     field = Field('generation1')
     knights = pygame.sprite.Group()
