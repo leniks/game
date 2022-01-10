@@ -1,6 +1,7 @@
 import pygame
 import os
 import sys
+from random import randint, shuffle
 
 
 def load_image(name, colorkey=None):
@@ -585,6 +586,30 @@ class Wizard2(pygame.sprite.Sprite):
                             self.field.first_team_turn = not self.field.first_team_turn
 
 
+def generation():
+    os.system(r'nul>data/generation1.txt')  # очищаем файл
+    with open('data/generation1.txt', 'w') as file:
+        ans = []
+        for i in range(10):
+            w = randint(1, 6)
+            r = []
+            for j in range(w):
+                r.append('1')
+            for j in range(10 - w):
+                r.append('0')
+            shuffle(r)
+            if 1 <= i <= 8:
+                r[2] = '0'
+                r[7] = '0'
+                r[1] = '0'
+                r[8] = '0'
+            r = ''.join(r)
+            ans.append(r)
+        for i in ans:
+            file.write(i + '\n')
+    return
+
+
 def game():
     running = True
     while running:
@@ -628,6 +653,7 @@ def game():
 
 
 if __name__ == '__main__':
+    generation()  # генерируем карту
     clock = pygame.time.Clock()
     FPS = 60
 
