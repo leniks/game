@@ -32,7 +32,7 @@ def start_screen():
     pygame.draw.rect(screen, (140, 97, 48), (300, 550, 400, 100))
 
     text1 = font.render('начать игру', True, (217, 188, 156))
-    text2 = font.render('продолжить игру', True, (217, 188, 156))
+    text2 = font.render('правила игры', True, (217, 188, 156))
     text3 = font.render("результаты", True, (217, 188, 156))
 
     screen.blit(text1, (370, 170))
@@ -56,11 +56,13 @@ def start_screen():
 
             if 300 <= mouse[0] <= 700 and 350 <= mouse[1] <= 450:
                 pygame.draw.rect(screen, (140, 150, 48), (300, 350, 400, 100))
-                text2 = font.render('продолжить игру', True, (217, 188, 156))
+                text2 = font.render('правила игры', True, (217, 188, 156))
                 screen.blit(text2, (320, 370))
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    rules()
             else:
                 pygame.draw.rect(screen, (140, 97, 48), (300, 350, 400, 100))
-                text2 = font.render('продолжить игру', True, (217, 188, 156))
+                text2 = font.render('правила игры', True, (217, 188, 156))
                 screen.blit(text2, (320, 370))
 
             if 300 <= mouse[0] <= 700 and 550 <= mouse[1] <= 650:
@@ -72,6 +74,31 @@ def start_screen():
                 text3 = font.render("результаты", True, (217, 188, 156))
                 screen.blit(text3, (370, 570))
 
+            if event.type == pygame.QUIT:
+                sys.exit()
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
+def rules():
+    fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+
+    rules = ['правила', 'потом напишем', '/////////////']
+    pygame.draw.rect(screen, (140, 97, 48), (50, 50, 900, 650))
+
+    text3 = font1.render("нажмите на любую кнопку, чтобы вернуться на главный экран", True, (217, 188, 156))
+
+    for i in range(len(rules)):
+        text1 = font1.render(rules[i], True, (217, 188, 156))
+        screen.blit(text1, (70, 70 + i * 30))
+        
+    screen.blit(text3, (70, 620))
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                start_screen()
             if event.type == pygame.QUIT:
                 sys.exit()
         pygame.display.flip()
@@ -420,6 +447,7 @@ if __name__ == '__main__':
     picture = load_image('trash.png')
     pygame.display.set_icon(picture)
     font = pygame.font.Font('data/21063.otf', 36)
+    font1 = pygame.font.Font('data/21063.otf', 24)
 
     start_screen()
     field = Field('generation1')
