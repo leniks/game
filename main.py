@@ -48,7 +48,7 @@ def start_screen():
                 text1 = font.render('начать игру', True, (217, 188, 156))
                 screen.blit(text1, (370, 170))
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    return  # начинаем игру
+                    game()
             else:
                 pygame.draw.rect(screen, (140, 97, 48), (300, 150, 400, 100))
                 text1 = font.render('начать игру', True, (217, 188, 156))
@@ -92,7 +92,7 @@ def rules():
     for i in range(len(rules)):
         text1 = font1.render(rules[i], True, (217, 188, 156))
         screen.blit(text1, (70, 70 + i * 30))
-        
+
     screen.blit(text3, (70, 620))
 
     while True:
@@ -437,32 +437,13 @@ class Knight2(pygame.sprite.Sprite):
                                 self.field.first_team_turn = not self.field.first_team_turn
 
 
-if __name__ == '__main__':
-    clock = pygame.time.Clock()
-    FPS = 60
-    pygame.init()
-    pygame.display.set_caption('Game')
-    screen_size = WIDTH, HEIGHT = 1000, 750
-    screen = pygame.display.set_mode(screen_size)
-    picture = load_image('trash.png')
-    pygame.display.set_icon(picture)
-    font = pygame.font.Font('data/21063.otf', 36)
-    font1 = pygame.font.Font('data/21063.otf', 24)
-
-    start_screen()
-    field = Field('generation1')
-    knights = pygame.sprite.Group()
-    for i in range(1, 9):
-        knight = Knight1(field, 2, i, knights)
-    for i in range(1, 9):
-        knight = Knight2(field, 7, i, knights)
-
+def game():
     running = True
     while running:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                sys.exit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 knights.update(event)
@@ -492,3 +473,25 @@ if __name__ == '__main__':
         field.render(screen, field.active_ch, field.active_ch_x, field.active_ch_y)
         knights.draw(screen)
         pygame.display.flip()
+
+
+if __name__ == '__main__':
+    clock = pygame.time.Clock()
+    FPS = 60
+    pygame.init()
+    pygame.display.set_caption('Game')
+    screen_size = WIDTH, HEIGHT = 1000, 750
+    screen = pygame.display.set_mode(screen_size)
+    picture = load_image('trash.png')
+    pygame.display.set_icon(picture)
+    font = pygame.font.Font('data/21063.otf', 36)
+    font1 = pygame.font.Font('data/21063.otf', 24)
+
+    field = Field('generation1')
+    knights = pygame.sprite.Group()
+    for i in range(1, 9):
+        knight = Knight1(field, 2, i, knights)
+    for i in range(1, 9):
+        knight = Knight2(field, 7, i, knights)
+
+    start_screen()
