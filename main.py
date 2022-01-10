@@ -277,10 +277,13 @@ class Knight1(pygame.sprite.Sprite):
         self.picked = False
 
         self.health = 10
+        self.damage = 4
         self.alive = True
 
     def update(self, *args):
+
         if args and args[0].type == pygame.MOUSEBUTTONDOWN:
+
             if field.get_cell(args[0].pos):
                 mouse_pos_x = self.field.get_cell(args[0].pos)[0]
                 mouse_pos_y = self.field.get_cell(args[0].pos)[1]
@@ -323,29 +326,17 @@ class Knight1(pygame.sprite.Sprite):
                                     attacked_ch = key
                                     break
 
-                            if attacked_ch.alive:
-                                attacked_ch.health -= 4
-                                if attacked_ch.health <= 0:
-                                    attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
-                                    attacked_ch.alive = False
+                            attacked_ch.health -= self.damage
+                            if attacked_ch.health <= 0:
+                                attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
+                                attacked_ch.alive = False
+                                self.field.team2[attacked_ch] = None
 
-                                self.picked = False
-                                self.field.active_ch = False
-                                self.field.attacked = True
+                            self.picked = False
+                            self.field.active_ch = False
+                            self.field.attacked = True
 
-                                self.field.first_team_turn = not self.field.first_team_turn
-
-                            else:
-                                self.rect = self.rect.move(-((self.field_x - mouse_pos_x) * Cell.size),
-                                                           -((self.field_y - mouse_pos_y) * Cell.size))
-                                self.field.team1[self] = (mouse_pos_x, mouse_pos_y)
-
-                                self.field_x = mouse_pos_x
-                                self.field_y = mouse_pos_y
-                                self.picked = False
-                                self.field.active_ch = False
-
-                                self.field.first_team_turn = not self.field.first_team_turn
+                            self.field.first_team_turn = not self.field.first_team_turn
 
 
 class Knight2(pygame.sprite.Sprite):
@@ -366,6 +357,7 @@ class Knight2(pygame.sprite.Sprite):
         self.picked = False
 
         self.health = 10
+        self.damage = 4
         self.alive = True
 
     def update(self, *args):
@@ -412,29 +404,185 @@ class Knight2(pygame.sprite.Sprite):
                                     attacked_ch = key
                                     break
 
-                            if attacked_ch.alive:
-                                attacked_ch.health -= 4
-                                if attacked_ch.health <= 0:
-                                    attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
-                                    attacked_ch.alive = False
+                            attacked_ch.health -= self.damage
+                            if attacked_ch.health <= 0:
+                                attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
+                                attacked_ch.alive = False
+                                self.field.team1[attacked_ch] = None
 
-                                self.picked = False
-                                self.field.active_ch = False
-                                self.field.attacked = True
+                            self.picked = False
+                            self.field.active_ch = False
+                            self.field.attacked = True
 
-                                self.field.first_team_turn = not self.field.first_team_turn
+                            self.field.first_team_turn = not self.field.first_team_turn
 
-                            else:
-                                self.rect = self.rect.move(-((self.field_x - mouse_pos_x) * Cell.size),
-                                                           -((self.field_y - mouse_pos_y) * Cell.size))
-                                self.field.team1[self] = (mouse_pos_x, mouse_pos_y)
 
-                                self.field_x = mouse_pos_x
-                                self.field_y = mouse_pos_y
-                                self.picked = False
-                                self.field.active_ch = False
+class Wizard1(pygame.sprite.Sprite):
+    """
+    field - поле, на котором создаются воины
+    image - картинка мага
+    rect.x, rect.y - координаты модельки воина в пикселях
+    field_x, field_y - координаты мага в номерах клеток
+    picked - выбран ли юнит
+    health - количество здоровья
+    mouse_pos_x, mouse_pos_y - позиция мыши при ходе в номерах клеток
+    """
 
-                                self.field.first_team_turn = not self.field.first_team_turn
+    def __init__(self, field, x, y, *group, ):
+        super().__init__(*group)
+        self.image = load_image('wizard.png', -1)
+        self.image = pygame.transform.scale(self.image, (40, 60))
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = \
+            field.cell_size * x + field.cell_size // 4, field.cell_size * y + field.cell_size // 8
+
+        self.field = field
+        self.field_x = x
+        self.field_y = y
+
+        self.field.team1[self] = (self.field_x, self.field_y)
+        self.picked = False
+
+        self.health = 8
+        self.damage = 2
+        self.alive = True
+
+    def update(self, *args):
+
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN:
+
+            if field.get_cell(args[0].pos):
+                mouse_pos_x = self.field.get_cell(args[0].pos)[0]
+                mouse_pos_y = self.field.get_cell(args[0].pos)[1]
+
+                if mouse_pos_x == self.field_x and mouse_pos_y == self.field_y and not self.field.active_ch \
+                        and not self.field.attacked and self.alive and self.field.first_team_turn:
+                    self.picked = True
+                    self.field.active_ch = True
+                    self.field.active_ch_x = mouse_pos_x
+                    self.field.active_ch_y = mouse_pos_y
+
+                if self.picked and (mouse_pos_x, mouse_pos_y) != (self.field_x, self.field_y):
+
+                    if (mouse_pos_x, mouse_pos_y) not in self.field.team1.values() and (mouse_pos_x, mouse_pos_y) \
+                            not in self.field.team2.values():
+
+                        if abs(self.field_x - mouse_pos_x) <= 1 and abs(self.field_y - mouse_pos_y) <= 1:
+                            self.rect = self.rect.move(-((self.field_x - mouse_pos_x) * Cell.size),
+                                                       -((self.field_y - mouse_pos_y) * Cell.size))
+                            self.field.team1[self] = (mouse_pos_x, mouse_pos_y)
+
+                            self.field_x = mouse_pos_x
+                            self.field_y = mouse_pos_y
+                            self.picked = False
+                            self.field.active_ch = False
+
+                            self.field.first_team_turn = not self.field.first_team_turn
+
+                    elif (mouse_pos_x, mouse_pos_y) not in self.field.team1.values() and (mouse_pos_x, mouse_pos_y) \
+                            in self.field.team2.values():
+
+                        if abs(self.field_x - mouse_pos_x) <= 3 and abs(self.field_y - mouse_pos_y) <= 3:
+                            attack_x = mouse_pos_x
+                            attack_y = mouse_pos_y
+
+                            attacked_ch = None
+
+                            for key, val in self.field.team2.items():
+                                if val == (attack_x, attack_y):
+                                    attacked_ch = key
+                                    break
+
+                            attacked_ch.health -= self.damage
+                            if attacked_ch.health <= 0:
+                                attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
+                                attacked_ch.alive = False
+                                self.field.team2[attacked_ch] = None
+
+                            self.picked = False
+                            self.field.active_ch = False
+                            self.field.attacked = True
+
+                            self.field.first_team_turn = not self.field.first_team_turn
+
+
+class Wizard2(pygame.sprite.Sprite):
+
+    def __init__(self, field, x, y, *group, ):
+        super().__init__(*group)
+        self.image = pygame.transform.flip(load_image('wizard.png', -1), True, False)
+        self.image = pygame.transform.scale(self.image, (40, 60))
+
+        self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = \
+            field.cell_size * x + field.cell_size // 4, field.cell_size * y + field.cell_size // 8
+
+        self.field = field
+        self.field_x = x
+        self.field_y = y
+
+        self.field.team2[self] = (self.field_x, self.field_y)
+        self.picked = False
+
+        self.health = 8
+        self.damage = 2
+        self.alive = True
+
+    def update(self, *args):
+        if args and args[0].type == pygame.MOUSEBUTTONDOWN:
+
+            if field.get_cell(args[0].pos):
+                mouse_pos_x = self.field.get_cell(args[0].pos)[0]
+                mouse_pos_y = self.field.get_cell(args[0].pos)[1]
+
+                if mouse_pos_x == self.field_x and mouse_pos_y == self.field_y and not self.field.active_ch \
+                        and not self.field.attacked and self.alive and not self.field.first_team_turn:
+                    self.picked = True
+                    self.field.active_ch = True
+                    self.field.active_ch_x = mouse_pos_x
+                    self.field.active_ch_y = mouse_pos_y
+
+                if self.picked and (mouse_pos_x, mouse_pos_y) != (self.field_x, self.field_y):
+
+                    if (mouse_pos_x, mouse_pos_y) not in self.field.team2.values() and (mouse_pos_x, mouse_pos_y) \
+                            not in self.field.team1.values():
+
+                        if abs(self.field_x - mouse_pos_x) <= 1 and abs(self.field_y - mouse_pos_y) <= 1:
+                            self.rect = self.rect.move(-((self.field_x - mouse_pos_x) * Cell.size),
+                                                       -((self.field_y - mouse_pos_y) * Cell.size))
+                            self.field.team2[self] = (mouse_pos_x, mouse_pos_y)
+
+                            self.field_x = mouse_pos_x
+                            self.field_y = mouse_pos_y
+                            self.picked = False
+                            self.field.active_ch = False
+
+                            self.field.first_team_turn = not self.field.first_team_turn
+
+                    elif (mouse_pos_x, mouse_pos_y) not in self.field.team2.values() and (mouse_pos_x, mouse_pos_y) \
+                            in self.field.team1.values():
+                        attack_x = mouse_pos_x
+                        attack_y = mouse_pos_y
+
+                        if abs(self.field_x - mouse_pos_x) <= 3 and abs(self.field_y - mouse_pos_y) <= 3:
+                            attacked_ch = None
+
+                            for key, val in self.field.team1.items():
+                                if val == (attack_x, attack_y):
+                                    attacked_ch = key
+                                    break
+
+                            attacked_ch.health -= self.damage
+                            if attacked_ch.health <= 0:
+                                attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
+                                attacked_ch.alive = False
+                                self.field.team1[attacked_ch] = None
+
+                            self.picked = False
+                            self.field.active_ch = False
+                            self.field.attacked = True
+
+                            self.field.first_team_turn = not self.field.first_team_turn
 
 
 def game():
@@ -447,6 +595,7 @@ def game():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 knights.update(event)
+                wizards.update(event)
                 field.attacked = False
 
                 sec_win = True
@@ -471,13 +620,17 @@ def game():
 
         screen.fill(pygame.Color('black'))
         field.render(screen, field.active_ch, field.active_ch_x, field.active_ch_y)
+
         knights.draw(screen)
+        wizards.draw(screen)
+
         pygame.display.flip()
 
 
 if __name__ == '__main__':
     clock = pygame.time.Clock()
     FPS = 60
+
     pygame.init()
     pygame.display.set_caption('Game')
     screen_size = WIDTH, HEIGHT = 1000, 750
@@ -488,10 +641,20 @@ if __name__ == '__main__':
     font1 = pygame.font.Font('data/21063.otf', 24)
 
     field = Field('generation1')
+
     knights = pygame.sprite.Group()
+    wizards = pygame.sprite.Group()
+
     for i in range(1, 9):
         knight = Knight1(field, 2, i, knights)
+
+    for i in range(1, 9):
+        wizard = Wizard1(field, 1, i, wizards)
+
     for i in range(1, 9):
         knight = Knight2(field, 7, i, knights)
+
+    for i in range(1, 9):
+        wizard = Wizard2(field, 8, i, wizards)
 
     start_screen()
