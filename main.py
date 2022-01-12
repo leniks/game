@@ -70,6 +70,8 @@ def start_screen():
                 pygame.draw.rect(screen, (140, 150, 48), (300, 550, 400, 100))
                 text3 = font.render("результаты", True, (217, 188, 156))
                 screen.blit(text3, (370, 570))
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    results()
             else:
                 pygame.draw.rect(screen, (140, 97, 48), (300, 550, 400, 100))
                 text3 = font.render("результаты", True, (217, 188, 156))
@@ -610,6 +612,51 @@ def generation():
     return
 
 
+def results(result=None):
+    if result:
+        with open('data/results.txt', 'w', encoding='utf-8') as f:
+            f.write(result)
+
+    fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+
+    text = ['результаты последних игр:']
+    pygame.draw.rect(screen, (140, 97, 48), (50, 50, 900, 650))
+
+    text3 = font1.render("нажмите на любую кнопку, чтобы вернуться на главный экран", True, (217, 188, 156))
+
+    with open('data/results.txt', 'r', encoding='utf-8') as f:
+        r = [i.strip() for i in f.readlines()][1:]
+    if len(r) == 0:
+        text.append('нет записанных результатов')
+    else:
+        if len(r) >= 7:
+            r = r[:7]
+        text.extend(r[::-1])
+
+    for i in range(len(text)):
+        if text[i] == 'first':
+            text1 = font1.render('победа первого игрока', True, (34, 89, 46))
+        elif text[i] == 'second':
+            text1 = font1.render('победа второго игрока', True, (127, 45, 45))
+        else:
+            text1 = font1.render(text[i], True, (217, 188, 156))
+        screen.blit(text1, (70, 70 + i * 30))
+
+    screen.blit(text3, (70, 620))
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                start_screen()
+            if event.type == pygame.QUIT:
+                sys.exit()
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
+
+
 def game():
     running = True
     while running:
@@ -628,9 +675,9 @@ def game():
                     if elem.alive:
                         sec_win = False
 
+
                 if sec_win:
-                    print('победила вторая команда')
-                    running = False
+                    results('second')
 
                 first_win = True
                 for elem in field.team2:
@@ -638,8 +685,7 @@ def game():
                         first_win = False
 
                 if first_win:
-                    print('победила первая команда')
-                    running = False
+                    results('first')
 
         clock.tick(FPS)
 
