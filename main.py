@@ -25,57 +25,74 @@ def load_image(name, colorkey=None):
 
 
 def start_screen():
+    global field, knights, wizards
+
     fon = pygame.transform.scale(load_image('fon1.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
 
-    pygame.draw.rect(screen, (140, 97, 48), (300, 150, 400, 100))
-    pygame.draw.rect(screen, (140, 97, 48), (300, 350, 400, 100))
-    pygame.draw.rect(screen, (140, 97, 48), (300, 550, 400, 100))
+    pygame.draw.rect(screen, (140, 97, 48), (400, 150, 400, 100))
+    pygame.draw.rect(screen, (140, 97, 48), (400, 350, 400, 100))
+    pygame.draw.rect(screen, (140, 97, 48), (400, 550, 400, 100))
 
     text1 = font.render('начать игру', True, (217, 188, 156))
     text2 = font.render('правила игры', True, (217, 188, 156))
     text3 = font.render("результаты", True, (217, 188, 156))
 
-    screen.blit(text1, (370, 170))
-    screen.blit(text2, (320, 370))
-    screen.blit(text3, (370, 570))
+    screen.blit(text1, (470, 170))
+    screen.blit(text2, (470, 370))
+    screen.blit(text3, (470, 570))
 
     while True:
         for event in pygame.event.get():
             mouse = pygame.mouse.get_pos()
 
-            if 300 <= mouse[0] <= 700 and 150 <= mouse[1] <= 250:
-                pygame.draw.rect(screen, (140, 150, 48), (300, 150, 400, 100))
+            if 400 <= mouse[0] <= 800 and 150 <= mouse[1] <= 250:
+                pygame.draw.rect(screen, (140, 150, 48), (400, 150, 400, 100))
                 text1 = font.render('начать игру', True, (217, 188, 156))
-                screen.blit(text1, (370, 170))
+                screen.blit(text1, (470, 170))
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    generation()  # генерируем карту
+                    knights = pygame.sprite.Group()
+                    wizards = pygame.sprite.Group()
+                    field = Field('generation1')
+                    for i in range(1, 9):
+                        knight = Knight1(field, 2, i, knights)
+
+                    for i in range(1, 9):
+                        wizard = Wizard1(field, 1, i, wizards)
+
+                    for i in range(1, 9):
+                        knight = Knight2(field, 7, i, knights)
+
+                    for i in range(1, 9):
+                        wizard = Wizard2(field, 8, i, wizards)
                     game()
             else:
-                pygame.draw.rect(screen, (140, 97, 48), (300, 150, 400, 100))
+                pygame.draw.rect(screen, (140, 97, 48), (400, 150, 400, 100))
                 text1 = font.render('начать игру', True, (217, 188, 156))
-                screen.blit(text1, (370, 170))
+                screen.blit(text1, (470, 170))
 
-            if 300 <= mouse[0] <= 700 and 350 <= mouse[1] <= 450:
-                pygame.draw.rect(screen, (140, 150, 48), (300, 350, 400, 100))
+            if 400 <= mouse[0] <= 800 and 350 <= mouse[1] <= 450:
+                pygame.draw.rect(screen, (140, 150, 48), (400, 350, 400, 100))
                 text2 = font.render('правила игры', True, (217, 188, 156))
-                screen.blit(text2, (320, 370))
+                screen.blit(text2, (470, 370))
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     rules()
             else:
-                pygame.draw.rect(screen, (140, 97, 48), (300, 350, 400, 100))
+                pygame.draw.rect(screen, (140, 97, 48), (400, 350, 400, 100))
                 text2 = font.render('правила игры', True, (217, 188, 156))
-                screen.blit(text2, (320, 370))
+                screen.blit(text2, (470, 370))
 
-            if 300 <= mouse[0] <= 700 and 550 <= mouse[1] <= 650:
-                pygame.draw.rect(screen, (140, 150, 48), (300, 550, 400, 100))
+            if 400 <= mouse[0] <= 800 and 550 <= mouse[1] <= 650:
+                pygame.draw.rect(screen, (140, 150, 48), (400, 550, 400, 100))
                 text3 = font.render("результаты", True, (217, 188, 156))
-                screen.blit(text3, (370, 570))
+                screen.blit(text3, (470, 570))
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     results()
             else:
-                pygame.draw.rect(screen, (140, 97, 48), (300, 550, 400, 100))
+                pygame.draw.rect(screen, (140, 97, 48), (400, 550, 400, 100))
                 text3 = font.render("результаты", True, (217, 188, 156))
-                screen.blit(text3, (370, 570))
+                screen.blit(text3, (470, 570))
 
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -88,7 +105,7 @@ def rules():
     screen.blit(fon, (0, 0))
 
     rules = ['правила', 'потом напишем', '/////////////']
-    pygame.draw.rect(screen, (140, 97, 48), (50, 50, 900, 650))
+    pygame.draw.rect(screen, (140, 97, 48), (50, 50, 1050, 650))
 
     text3 = font1.render("нажмите на любую кнопку, чтобы вернуться на главный экран", True, (217, 188, 156))
 
@@ -589,7 +606,7 @@ class Wizard2(pygame.sprite.Sprite):
 
 
 def generation():
-    os.system(r'nul>data/generation1.txt')  # очищаем файл
+    # os.system(r'nul>data/generation1.txt')  # очищаем файл
     with open('data/generation1.txt', 'w') as file:
         ans = []
         for i in range(10):
@@ -609,7 +626,7 @@ def generation():
             ans.append(r)
         for i in ans:
             file.write(i + '\n')
-    return
+    return None
 
 
 def results(result=None):
@@ -621,7 +638,7 @@ def results(result=None):
     screen.blit(fon, (0, 0))
 
     text = ['результаты последних игр:']
-    pygame.draw.rect(screen, (140, 97, 48), (50, 50, 900, 650))
+    pygame.draw.rect(screen, (140, 97, 48), (50, 50, 1050, 650))
 
     text3 = font1.render("нажмите на любую кнопку, чтобы вернуться на главный экран", True, (217, 188, 156))
 
@@ -655,13 +672,46 @@ def results(result=None):
         clock.tick(FPS)
 
 
-
-
 def game():
+    fon = pygame.transform.scale(load_image('fon1.jpg'), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+
     running = True
     while running:
+        mouse = pygame.mouse.get_pos()
+
+        a, b = len([i for i in field.team1 if i.alive]), len([i for i in field.team2 if i.alive])
+
+        pygame.draw.rect(screen, (140, 97, 48), (780, 100, 350, 80))
+        pygame.draw.rect(screen, (140, 97, 48), (780, 240, 350, 180))
+        pygame.draw.rect(screen, (140, 97, 48), (780, 380, 350, 180))
+
+        text1 = font1.render(f'ход {a} игрока', True, (217, 188, 156))
+
+        text3 = font1.render("у первого игрока", True, (217, 188, 156))
+        text6 = font1.render(f"осталось юнитов: {a}", True, (217, 188, 156))
+
+        text4 = font1.render("у второго игрока", True, (217, 188, 156))
+        text7 = font1.render(f"осталось юнитов: {b}", True, (217, 188, 156))
+
+        screen.blit(text1, (790, 130))
+        screen.blit(text3, (790, 250))
+        screen.blit(text4, (790, 450))
+        screen.blit(text6, (790, 300))
+        screen.blit(text7, (790, 500))
 
         for event in pygame.event.get():
+            if 780 <= mouse[0] <= 1130 and 640 <= mouse[1] <= 720:
+                pygame.draw.rect(screen, (140, 150, 48), (780, 640, 350, 80))
+                text5 = font1.render("нажмите, чтобы выйти", True, (217, 188, 156))
+                screen.blit(text5, (790, 650))
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    start_screen()
+            else:
+                pygame.draw.rect(screen, (140, 97, 48), (780, 640, 350, 80))
+                text5 = font1.render("нажмите, чтобы выйти", True, (217, 188, 156))
+                screen.blit(text5, (790, 650))
+
             if event.type == pygame.QUIT:
                 sys.exit()
 
@@ -675,7 +725,6 @@ def game():
                     if elem.alive:
                         sec_win = False
 
-
                 if sec_win:
                     results('second')
 
@@ -688,8 +737,6 @@ def game():
                     results('first')
 
         clock.tick(FPS)
-
-        screen.fill(pygame.Color('black'))
         field.render(screen, field.active_ch, field.active_ch_x, field.active_ch_y)
 
         knights.draw(screen)
@@ -699,13 +746,12 @@ def game():
 
 
 if __name__ == '__main__':
-    generation()  # генерируем карту
     clock = pygame.time.Clock()
     FPS = 60
 
     pygame.init()
     pygame.display.set_caption('Game')
-    screen_size = WIDTH, HEIGHT = 1000, 750
+    screen_size = WIDTH, HEIGHT = 1150, 750
     screen = pygame.display.set_mode(screen_size)
     picture = load_image('trash.png')
     pygame.display.set_icon(picture)
