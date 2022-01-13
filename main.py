@@ -682,9 +682,9 @@ def game():
 
         a, b = len([i for i in field.team1 if i.alive]), len([i for i in field.team2 if i.alive])
 
-        pygame.draw.rect(screen, (140, 97, 48), (780, 100, 350, 80))
-        pygame.draw.rect(screen, (140, 97, 48), (780, 240, 350, 180))
-        pygame.draw.rect(screen, (140, 97, 48), (780, 380, 350, 180))
+        pygame.draw.rect(screen, (140, 97, 48), (780, 40, 350, 80))
+        pygame.draw.rect(screen, (140, 97, 48), (780, 140, 350, 180))
+        pygame.draw.rect(screen, (140, 97, 48), (780, 280, 350, 180))
         if field.first_team_turn:
             text1 = font1.render(f'ход первого игрока', True, (34, 89, 46))
         else:
@@ -696,11 +696,11 @@ def game():
         text4 = font1.render("у второго игрока", True, (217, 188, 156))
         text7 = font1.render(f"осталось юнитов: {b}", True, (217, 188, 156))
 
-        screen.blit(text1, (790, 130))
-        screen.blit(text3, (790, 250))
-        screen.blit(text4, (790, 450))
-        screen.blit(text6, (790, 300))
-        screen.blit(text7, (790, 500))
+        screen.blit(text1, (790, 60))
+        screen.blit(text3, (790, 150))
+        screen.blit(text4, (790, 350))
+        screen.blit(text6, (790, 200))
+        screen.blit(text7, (790, 400))
 
         for event in pygame.event.get():
             if 780 <= mouse[0] <= 1130 and 640 <= mouse[1] <= 720:
@@ -713,6 +713,17 @@ def game():
                 pygame.draw.rect(screen, (140, 97, 48), (780, 640, 350, 80))
                 text5 = font1.render("нажмите, чтобы выйти", True, (217, 188, 156))
                 screen.blit(text5, (790, 650))
+
+            if 780 <= mouse[0] <= 1130 and 540 <= mouse[1] <= 620:
+                pygame.draw.rect(screen, (140, 150, 48), (780, 540, 350, 80))
+                text5 = font1.render("отменить выбор", True, (217, 188, 156))
+                screen.blit(text5, (790, 550))
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pass # print(knight.picked)
+            else:
+                pygame.draw.rect(screen, (140, 97, 48), (780, 540, 350, 80))
+                text5 = font1.render("отменить выбор", True, (217, 188, 156))
+                screen.blit(text5, (790, 550))
 
             if event.type == pygame.QUIT:
                 sys.exit()
