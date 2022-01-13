@@ -685,8 +685,10 @@ def game():
         pygame.draw.rect(screen, (140, 97, 48), (780, 100, 350, 80))
         pygame.draw.rect(screen, (140, 97, 48), (780, 240, 350, 180))
         pygame.draw.rect(screen, (140, 97, 48), (780, 380, 350, 180))
-
-        text1 = font1.render(f'ход {a} игрока', True, (217, 188, 156))
+        if field.first_team_turn:
+            text1 = font1.render(f'ход первого игрока', True, (34, 89, 46))
+        else:
+            text1 = font1.render(f'ход второго игрока', True, (127, 45, 45))
 
         text3 = font1.render("у первого игрока", True, (217, 188, 156))
         text6 = font1.render(f"осталось юнитов: {a}", True, (217, 188, 156))
