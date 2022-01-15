@@ -68,7 +68,7 @@ def start_screen():
                         knights.add(knight)
 
                     for i in range(1, 9):
-                        wizard = Wizard2(field, 3, i, load_image("att.png"), 9, 1, wizards)
+                        wizard = Wizard2(field, 8, i, load_image("att.png"), 9, 1, wizards)
                         wizards.add(wizard)
                     game()
             else:
@@ -334,7 +334,6 @@ class Knight1(pygame.sprite.Sprite):
     def update(self, *args):
         self.image = self.frames[self.cur_frame]
         if self.is_animating:
-            print(1)
             self.cur_frame += 1
             self.cur_frame %= 11
             if self.cur_frame == 0:
@@ -438,7 +437,6 @@ class Knight2(pygame.sprite.Sprite):
     def update(self, *args):
         self.image = self.frames[self.cur_frame]
         if self.is_animating:
-            print(1)
             self.cur_frame += 1
             self.cur_frame %= 11
             if self.cur_frame == 0:
@@ -549,7 +547,6 @@ class Wizard1(pygame.sprite.Sprite):
     def update(self, *args):
         self.image = self.frames[self.cur_frame]
         if self.is_animating:
-            print(1)
             self.cur_frame += 1
             self.cur_frame %= 9
             if self.cur_frame == 8:
@@ -655,7 +652,6 @@ class Wizard2(pygame.sprite.Sprite):
         self.image = self.frames[self.cur_frame]
 
         if self.is_animating:
-            print(1)
             self.cur_frame += 1
             self.cur_frame %= 9
             if self.cur_frame == 8:
@@ -886,7 +882,7 @@ def game():
 
 if __name__ == '__main__':
     clock = pygame.time.Clock()
-    FPS = 20
+    FPS = 30
 
     pygame.init()
     pygame.display.set_caption('Game')
@@ -915,7 +911,7 @@ if __name__ == '__main__':
         knights.add(knight)
 
     for i in range(1, 9):
-        wizard = Wizard2(field, 3, i, load_image("att.png"), 9, 1, wizards)
+        wizard = Wizard2(field, 8, i, load_image("att.png"), 9, 1, wizards)
         wizards.add(wizard)
 
     start_screen()
