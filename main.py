@@ -64,11 +64,11 @@ def start_screen():
                         wizards.add(wizard)
 
                     for i in range(1, 9):
-                        knight = Knight2(field, 7, i, load_image("atttt.png"), 11, 1, knights)
+                        knight = Knight2(field, 7, i, load_image("atttt2.png"), 11, 1, knights)
                         knights.add(knight)
 
                     for i in range(1, 9):
-                        wizard = Wizard2(field, 8, i, load_image("att.png"), 9, 1, wizards)
+                        wizard = Wizard2(field, 8, i, load_image("att2.png"), 9, 1, wizards)
                         wizards.add(wizard)
                     game()
             else:
@@ -718,7 +718,7 @@ def generation():
     with open('data/generation1.txt', 'w') as file:
         ans = []
         for i in range(10):
-            w = randint(1, 6)
+            w = randint(1, 5)
             r = []
             for j in range(w):
                 r.append('1')
@@ -898,11 +898,11 @@ if __name__ == '__main__':
     knights = pygame.sprite.Group()
     wizards = pygame.sprite.Group()
 
-    for i in range(1, 9):
+    '''for i in range(1, 9):
         knight = Knight1(field, 2, i, load_image("atttt.png"), 11, 1, knights)
-        knights.add(knight)
+        knights.add(knight)'''
 
-    for i in range(1, 9):
+    '''for i in range(1, 9):
         wizard = Wizard1(field, 1, i, load_image("att.png"), 9, 1, wizards)
         wizards.add(wizard)
 
@@ -911,7 +911,7 @@ if __name__ == '__main__':
         knights.add(knight)
 
     for i in range(1, 9):
-        wizard = Wizard2(field, 8, i, load_image("att.png"), 9, 1, wizards)
-        wizards.add(wizard)
+        wizard = Wizard2(field, 3, i, load_image("att.png"), 9, 1, wizards)
+        wizards.add(wizard)'''
 
     start_screen()
