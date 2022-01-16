@@ -106,27 +106,47 @@ def start_screen():
 
 def rules():
     fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
-    screen.blit(fon, (0, 0))
-
     rules = ['правила', 'потом напишем', '/////////////']
-    pygame.draw.rect(screen, (140, 97, 48), (50, 50, 1050, 650))
-
     text3 = font1.render("нажмите на любую кнопку, чтобы вернуться на главный экран", True, (217, 188, 156))
-
-    for i in range(len(rules)):
-        text1 = font1.render(rules[i], True, (217, 188, 156))
-        screen.blit(text1, (70, 70 + i * 30))
-
-    screen.blit(text3, (70, 620))
-
+    dd = [[10, 730, '+'], [1140, 730, '-']]
     while True:
+        screen.blit(fon, (0, 0))
+        pygame.draw.rect(screen, (140, 97, 48), (50, 50, 1050, 650))
+
+        for i in range(len(rules)):
+            text1 = font1.render(rules[i], True, (217, 188, 156))
+            screen.blit(text1, (70, 70 + i * 30))
+
+        screen.blit(text3, (70, 620))
+
+        for i in range(len(dd)):
+            pygame.draw.circle(screen, pygame.Color('white'), (dd[i][0], dd[i][1]), 10)
+            if dd[i][2] == '-':
+                dd[i][0] = dd[i][0] - 2
+                if abs(dd[0][0] - dd[1][0]) == 20:
+                    if dd[0][2] == '-':
+                        dd[0][2] = '+'
+                    else:
+                        dd[0][2] = '-'
+                    if dd[1][2] == '-':
+                        dd[1][2] = '+'
+                    else:
+                        dd[1][2] = '-'
+                if dd[i][0] == 10:
+                    dd[i][2] = '+'
+            if dd[i][2] == '+':
+                dd[i][0] = dd[i][0] + 1
+                if dd[i][0] == 1140:
+                    dd[i][2] = '-'
+
         for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-                start_screen()
             if event.type == pygame.QUIT:
                 sys.exit()
+            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                start_screen()
+
         pygame.display.flip()
-        clock.tick(FPS)
+        clock.tick(150)
 
 
 class Cell:
