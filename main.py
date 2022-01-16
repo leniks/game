@@ -30,18 +30,6 @@ def start_screen():
     fon = pygame.transform.scale(load_image('fon1.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
 
-    pygame.draw.rect(screen, (140, 97, 48), (400, 150, 400, 100))
-    pygame.draw.rect(screen, (140, 97, 48), (400, 350, 400, 100))
-    pygame.draw.rect(screen, (140, 97, 48), (400, 550, 400, 100))
-
-    text1 = font.render('начать игру', True, (217, 188, 156))
-    text2 = font.render('правила игры', True, (217, 188, 156))
-    text3 = font.render("результаты", True, (217, 188, 156))
-
-    screen.blit(text1, (470, 170))
-    screen.blit(text2, (470, 370))
-    screen.blit(text3, (470, 570))
-
     while True:
         for event in pygame.event.get():
             mouse = pygame.mouse.get_pos()
@@ -149,10 +137,10 @@ def rules():
         screen.blit(text3, (70, 620))
 
         for i in range(len(dd)):
-            pygame.draw.circle(screen, pygame.Color('white'), (dd[i][0], dd[i][1]), 10)
+            pygame.draw.circle(screen, (140, 97, 48), (dd[i][0], dd[i][1]), 20)
             if dd[i][2] == '-':
                 dd[i][0] = dd[i][0] - 2
-                if abs(dd[0][0] - dd[1][0]) == 20:
+                if abs(dd[0][0] - dd[1][0]) <= 40:
                     if dd[0][2] == '-':
                         dd[0][2] = '+'
                     else:
