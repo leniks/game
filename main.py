@@ -546,7 +546,7 @@ class Wizard1(pygame.sprite.Sprite):
     mouse_pos_x, mouse_pos_y - позиция мыши при ходе в номерах клеток
     """
 
-    def __init__(self, field, x, y,sheet, columns, rows, *group, ):
+    def __init__(self, field, x, y, sheet, columns, rows, *group, ):
         super().__init__(*group)
         self.frames = []
         self.cut_sheet(sheet, columns, rows)
@@ -914,13 +914,17 @@ def game():
 
         for elem, coords in field.team1.items():
             try:
-                pygame.draw.rect(screen, (0, 255, 0), (coords[0] * Cell.size + Cell.size // 8, (coords[1] + 1) * Cell.size - Cell.size // 8, 5 * elem.health, 5))
+                pygame.draw.rect(screen, (0, 255, 0),
+                                 (coords[0] * Cell.size + Cell.size // 8,
+                                  (coords[1] + 1) * Cell.size - Cell.size // 8, 5 * elem.health, 5))
             except TypeError:
                 pass
 
         for elem, coords in field.team2.items():
             try:
-                pygame.draw.rect(screen, (0, 255, 0), (coords[0] * Cell.size + Cell.size // 8, (coords[1] + 1) * Cell.size - Cell.size // 8, 5 * elem.health, 5))
+                pygame.draw.rect(screen, (0, 255, 0),
+                                 (coords[0] * Cell.size + Cell.size // 8,
+                                  (coords[1] + 1) * Cell.size - Cell.size // 8, 5 * elem.health, 5))
             except TypeError:
                 pass
 
