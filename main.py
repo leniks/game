@@ -912,6 +912,18 @@ def game():
         clock.tick(FPS)
         field.render(screen, field.active_ch, field.active_ch_x, field.active_ch_y)
 
+        for elem, coords in field.team1.items():
+            try:
+                pygame.draw.rect(screen, (0, 255, 0), (coords[0] * Cell.size + Cell.size // 8, (coords[1] + 1) * Cell.size - Cell.size // 8, 5 * elem.health, 5))
+            except TypeError:
+                pass
+
+        for elem, coords in field.team2.items():
+            try:
+                pygame.draw.rect(screen, (0, 255, 0), (coords[0] * Cell.size + Cell.size // 8, (coords[1] + 1) * Cell.size - Cell.size // 8, 5 * elem.health, 5))
+            except TypeError:
+                pass
+
         knights.draw(screen)
         wizards.draw(screen)
 
@@ -920,7 +932,7 @@ def game():
 
 if __name__ == '__main__':
     clock = pygame.time.Clock()
-    FPS = 30
+    FPS = 15
 
     pygame.init()
     pygame.display.set_caption('Game')
