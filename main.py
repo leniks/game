@@ -913,10 +913,6 @@ if __name__ == '__main__':
     pygame.display.set_icon(picture)
     font = pygame.font.Font('data/21063.otf', 36)
     font1 = pygame.font.Font('data/21063.otf', 24)
-
     field = Field('generation1')
-
-    knights = pygame.sprite.Group()
-    wizards = pygame.sprite.Group()
-
+    
     start_screen()
