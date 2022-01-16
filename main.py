@@ -739,8 +739,9 @@ def generation():
 
 def results(result=None):
     if result:
-        with open('data/results.txt', 'w', encoding='utf-8') as f:
-            f.write(result)
+        f = open('data/results.txt', 'a')
+        f.write(result + '\n')
+        f.close()
 
     fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
@@ -898,11 +899,11 @@ if __name__ == '__main__':
     knights = pygame.sprite.Group()
     wizards = pygame.sprite.Group()
 
-    '''for i in range(1, 9):
+    for i in range(1, 9):
         knight = Knight1(field, 2, i, load_image("atttt.png"), 11, 1, knights)
-        knights.add(knight)'''
+        knights.add(knight)
 
-    '''for i in range(1, 9):
+    for i in range(1, 9):
         wizard = Wizard1(field, 1, i, load_image("att.png"), 9, 1, wizards)
         wizards.add(wizard)
 
@@ -911,7 +912,7 @@ if __name__ == '__main__':
         knights.add(knight)
 
     for i in range(1, 9):
-        wizard = Wizard2(field, 3, i, load_image("att.png"), 9, 1, wizards)
-        wizards.add(wizard)'''
+        wizard = Wizard2(field, 8, i, load_image("att.png"), 9, 1, wizards)
+        wizards.add(wizard)
 
     start_screen()
