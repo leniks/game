@@ -903,7 +903,7 @@ def game():
 
 if __name__ == '__main__':
     clock = pygame.time.Clock()
-    FPS = 30
+    FPS = 20
 
     pygame.init()
     pygame.display.set_caption('Game')
@@ -918,21 +918,5 @@ if __name__ == '__main__':
 
     knights = pygame.sprite.Group()
     wizards = pygame.sprite.Group()
-
-    for i in range(1, 9):
-        knight = Knight1(field, 2, i, load_image("atttt.png"), 11, 1, knights)
-        knights.add(knight)
-
-    for i in range(1, 9):
-        wizard = Wizard1(field, 1, i, load_image("att.png"), 9, 1, wizards)
-        wizards.add(wizard)
-
-    for i in range(1, 9):
-        knight = Knight2(field, 7, i, load_image("atttt.png"), 11, 1, knights)
-        knights.add(knight)
-
-    for i in range(1, 9):
-        wizard = Wizard2(field, 8, i, load_image("att.png"), 9, 1, wizards)
-        wizards.add(wizard)
 
     start_screen()
