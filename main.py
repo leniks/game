@@ -123,7 +123,16 @@ def start_screen():
 
 def rules():
     fon = pygame.transform.scale(load_image('fon.jpg'), (WIDTH, HEIGHT))
-    rules = ['правила', 'потом напишем', '/////////////']
+    rules = ['правила', '',
+             'игра предназначена для 2 игроков',
+             'игроки ходят по очереди', '',
+             'за один ход можно передвинуть своего юнита',
+             'или атаковать им противника', '',
+             'каждый тип юнитов имеет уникальные характеристики:',
+             'урон, здоровье, способность наносить урон на расстоянии', '',
+             'игра заканчивается, когда один игрок',
+             'уничтожает все юниты другого игрока']
+
     text3 = font1.render("нажмите на любую кнопку, чтобы вернуться на главный экран", True, (217, 188, 156))
     dd = [[10, 730, '+'], [1140, 730, '-']]
     while True:
@@ -565,8 +574,8 @@ class Wizard1(pygame.sprite.Sprite):
         self.field.team1[self] = (self.field_x, self.field_y)
         self.picked = False
 
-        self.health = 8
-        self.damage = 2
+        self.health = 10
+        self.damage = 3
         self.alive = True
 
     def cut_sheet(self, sheet, columns, rows):
@@ -670,8 +679,8 @@ class Wizard2(pygame.sprite.Sprite):
         self.field.team2[self] = (self.field_x, self.field_y)
         self.picked = False
         self.is_animating = False
-        self.health = 8
-        self.damage = 2
+        self.health = 10
+        self.damage = 3
 
     def cut_sheet(self, sheet, columns, rows):
         self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
@@ -947,5 +956,6 @@ if __name__ == '__main__':
     font = pygame.font.Font('data/21063.otf', 36)
     font1 = pygame.font.Font('data/21063.otf', 24)
     field = Field('generation1')
-    
+
     start_screen()
+    
