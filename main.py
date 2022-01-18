@@ -46,45 +46,45 @@ def start_screen():
                     e = randint(1, 3)
                     if e == 1:
                         for i in range(1, 9):
-                            knight = Knight1(field, 2, i, load_image("atttt.png"), 11, 1, knights)
+                            knight = Knight1(field, 2, i, knights)
                             knights.add(knight)
 
                         for i in range(1, 9):
-                            wizard = Wizard1(field, 1, i, load_image("att.png"), 9, 1, wizards)
+                            wizard = Wizard1(field, 1, i, wizards)
                             wizards.add(wizard)
 
                         for i in range(1, 9):
-                            knight = Knight2(field, 7, i, load_image("atttt2.png"), 11, 1, knights)
+                            knight = Knight2(field, 7, i, knights)
                             knights.add(knight)
 
                         for i in range(1, 9):
-                            wizard = Wizard2(field, 8, i, load_image("att2.png"), 9, 1, wizards)
+                            wizard = Wizard2(field, 8, i, wizards)
                             wizards.add(wizard)
 
                     elif e == 2:
-                        knight = Knight1(field, 2, 4, load_image("atttt.png"), 11, 1, knights)
+                        knight = Knight1(field, 2, 4, knights)
                         knights.add(knight)
-                        wizard = Wizard1(field, 1, 5, load_image("att.png"), 9, 1, wizards)
+                        wizard = Wizard1(field, 1, 5, wizards)
                         wizards.add(wizard)
-                        knight = Knight2(field, 7, 5, load_image("atttt2.png"), 11, 1, knights)
+                        knight = Knight2(field, 7, 5, knights)
                         knights.add(knight)
-                        wizard = Wizard2(field, 8, 4, load_image("att2.png"), 9, 1, wizards)
+                        wizard = Wizard2(field, 8, 4, wizards)
                         wizards.add(wizard)
                     else:
                         for i in range(1, 9):
                             if i >= 5:
-                                knight = Knight1(field, 2, i, load_image("atttt.png"), 11, 1, knights)
+                                knight = Knight1(field, 2, i, knights)
                                 knights.add(knight)
                             else:
-                                wizard = Wizard1(field, 2, i, load_image("att.png"), 9, 1, wizards)
+                                wizard = Wizard1(field, 2, i, wizards)
                                 wizards.add(wizard)
 
                         for i in range(1, 9):
                             if i < 5:
-                                knight = Knight2(field, 8, i, load_image("atttt2.png"), 11, 1, knights)
+                                knight = Knight2(field, 8, i, knights)
                                 knights.add(knight)
                             else:
-                                wizard = Wizard2(field, 8, i, load_image("att2.png"), 9, 1, wizards)
+                                wizard = Wizard2(field, 8, i, wizards)
                                 wizards.add(wizard)
                     game()
 
@@ -344,14 +344,16 @@ class Knight1(pygame.sprite.Sprite):
     mouse_pos_x, mouse_pos_y - позиция мыши при ходе в номерах клеток
     """
 
-    def __init__(self, field, x, y, sheet, columns, rows, *group, ):
+    def __init__(self, field, x, y, *group, ):
         super().__init__(*group)
         self.frames = []
-        self.cut_sheet(sheet, columns, rows)
+        self.cut_sheet(load_image("atttt.png"), 11, 1)
+        self.cut_sheet(load_image("dedinsidekn.png"), 8, 1, 40, 40)
+        self.cut_sheet(load_image("walkkn.png"), 8, 1)
         self.cur_frame = 0
         self.is_animating = False
-        self.image = self.frames[self.cur_frame % 9]
-        self.image = pygame.transform.scale(self.image, (50, 50))
+        self.someoned = False
+        self.image = self.frames[self.cur_frame]
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = \
             field.cell_size * x + field.cell_size // 4, field.cell_size * y + field.cell_size // 4
@@ -362,25 +364,50 @@ class Knight1(pygame.sprite.Sprite):
 
         self.field.team1[self] = (self.field_x, self.field_y)
         self.picked = False
+        self.walking = False
 
         self.health = 10
         self.damage = 4
         self.alive = True
+        self.toa = ""
+        self.first = False
 
-    def cut_sheet(self, sheet, columns, rows):
+    def cut_sheet(self, sheet, columns, rows, x=50, y=50):
         self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
                                 sheet.get_height() // rows)
         for j in range(rows):
             for z in range(columns):
                 frame_location = (self.rect.w * z, self.rect.h * j)
                 self.frames.append(pygame.transform.scale(sheet.subsurface(pygame.Rect(
-                    frame_location, self.rect.size)), (50, 50)))
+                    frame_location, self.rect.size)), (x, y)))
 
     def attackanimate(self):
         self.is_animating = True
 
+    def somd(self, x):
+        self.someoned = True
+        self.toa = x
+        self.first = True
+
     def update(self, *args):
         self.image = self.frames[self.cur_frame]
+        if self.someoned:
+            if str(self.toa)[3:5] == "ig":
+                if self.first:
+                    self.toa.cur_frame = 11
+                    self.first = False
+                self.toa.cur_frame += 1
+                if self.toa.cur_frame == 17:
+                    self.someoned = False
+            else:
+                print(1)
+                if self.first:
+                    self.toa.cur_frame = 9
+                    self.first = False
+                self.toa.cur_frame += 1
+                if self.toa.cur_frame == 14:
+                    self.someoned = False
+
         if self.is_animating:
             self.cur_frame += 1
             self.cur_frame %= 11
@@ -433,7 +460,7 @@ class Knight1(pygame.sprite.Sprite):
                             self.attackanimate()
                             attacked_ch.health -= self.damage
                             if attacked_ch.health <= 0:
-                                attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
+                                self.somd(attacked_ch)
                                 attacked_ch.alive = False
                                 self.field.team2[attacked_ch] = None
 
@@ -446,13 +473,17 @@ class Knight1(pygame.sprite.Sprite):
 
 class Knight2(pygame.sprite.Sprite):
 
-    def __init__(self, field, x, y, sheet, columns, rows, *group, ):
+    def __init__(self, field, x, y, *group, ):
         super().__init__(*group)
         self.frames = []
-        self.cut_sheet(sheet, columns, rows)
+        self.cut_sheet(load_image("atttt.png"), 11, 1)
+        self.cut_sheet(load_image("dedinsidekn.png"), 8, 1, 40, 40)
+        self.cut_sheet(load_image("walkkn.png"), 8, 1)
         self.cur_frame = 0
         self.is_animating = False
-        self.image = self.frames[self.cur_frame % 9]
+        self.someoned = False
+        self.walking = False
+        self.image = self.frames[self.cur_frame]
         self.image = pygame.transform.scale(self.image, (50, 50))
 
         self.rect = self.image.get_rect()
@@ -469,21 +500,45 @@ class Knight2(pygame.sprite.Sprite):
         self.health = 10
         self.damage = 4
         self.alive = True
+        self.toa = ""
+        self.first = False
 
-    def cut_sheet(self, sheet, columns, rows):
+    def cut_sheet(self, sheet, columns, rows, x=50, y=50):
         self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
                                 sheet.get_height() // rows)
         for j in range(rows):
             for z in range(columns):
                 frame_location = (self.rect.w * z, self.rect.h * j)
                 self.frames.append(pygame.transform.scale(sheet.subsurface(pygame.Rect(
-                    frame_location, self.rect.size)), (50, 50)))
+                    frame_location, self.rect.size)), (x, y)))
 
     def attackanimate(self):
         self.is_animating = True
 
+    def somd(self, x):
+        self.someoned = True
+        self.toa = x
+        self.first = True
+
     def update(self, *args):
         self.image = self.frames[self.cur_frame]
+        if self.someoned:
+            if str(self.toa)[3:5] == "ig":
+                if self.first:
+                    self.toa.cur_frame = 11
+                    self.first = False
+                self.toa.cur_frame += 1
+                if self.toa.cur_frame == 17:
+                    self.someoned = False
+            else:
+                print(1)
+                if self.first:
+                    self.toa.cur_frame = 9
+                    self.first = False
+                self.toa.cur_frame += 1
+                if self.toa.cur_frame == 14:
+                    self.someoned = False
+
         if self.is_animating:
             self.cur_frame += 1
             self.cur_frame %= 11
@@ -535,7 +590,7 @@ class Knight2(pygame.sprite.Sprite):
                             self.attackanimate()
                             attacked_ch.health -= self.damage
                             if attacked_ch.health <= 0:
-                                attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
+                                self.somd(attacked_ch)
                                 attacked_ch.alive = False
                                 self.field.team1[attacked_ch] = None
 
@@ -557,13 +612,17 @@ class Wizard1(pygame.sprite.Sprite):
     mouse_pos_x, mouse_pos_y - позиция мыши при ходе в номерах клеток
     """
 
-    def __init__(self, field, x, y, sheet, columns, rows, *group, ):
+    def __init__(self, field, x, y, *group, ):
         super().__init__(*group)
         self.frames = []
-        self.cut_sheet(sheet, columns, rows)
+        self.cut_sheet(load_image("att.png"), 9, 1)
+        self.cut_sheet(load_image("dedinsidewiz.png"), 7, 1)
+        self.cut_sheet(load_image("walkwiz.png"), 8, 1)
         self.cur_frame = 8
         self.is_animating = False
-        self.image = self.frames[self.cur_frame % 9]
+        self.someoned = False
+        self.walking = False
+        self.image = self.frames[self.cur_frame]
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = \
@@ -579,6 +638,8 @@ class Wizard1(pygame.sprite.Sprite):
         self.health = 10
         self.damage = 3
         self.alive = True
+        self.toa = ""
+        self.first = False
 
     def cut_sheet(self, sheet, columns, rows):
         self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
@@ -592,8 +653,30 @@ class Wizard1(pygame.sprite.Sprite):
     def attackanimate(self):
         self.is_animating = True
 
+    def somd(self, x):
+        self.someoned = True
+        self.toa = x
+        self.first = True
+
     def update(self, *args):
         self.image = self.frames[self.cur_frame]
+        if self.someoned:
+            if str(self.toa)[3:5] == "ig":
+                if self.first:
+                    self.toa.cur_frame = 11
+                    self.first = False
+                self.toa.cur_frame += 1
+                if self.toa.cur_frame == 17:
+                    self.someoned = False
+            else:
+                print(1)
+                if self.first:
+                    self.toa.cur_frame = 9
+                    self.first = False
+                self.toa.cur_frame += 1
+                if self.toa.cur_frame == 14:
+                    self.someoned = False
+
         if self.is_animating:
             self.cur_frame += 1
             self.cur_frame %= 9
@@ -648,7 +731,7 @@ class Wizard1(pygame.sprite.Sprite):
 
                             attacked_ch.health -= self.damage
                             if attacked_ch.health <= 0:
-                                attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
+                                self.somd(attacked_ch)
                                 attacked_ch.alive = False
                                 self.field.team2[attacked_ch] = None
 
@@ -661,13 +744,15 @@ class Wizard1(pygame.sprite.Sprite):
 
 class Wizard2(pygame.sprite.Sprite):
 
-    def __init__(self, field, x, y, sheet, columns, rows, *group, ):
+    def __init__(self, field, x, y, *group, ):
         super().__init__(*group)
         self.alive = True
         self.frames = []
-        self.cut_sheet(sheet, columns, rows)
+        self.cut_sheet(load_image("att.png"), 9, 1)
+        self.cut_sheet(load_image("dedinsidewiz.png"), 7, 1)
+        self.cut_sheet(load_image("walkwiz.png"), 8, 1)
         self.cur_frame = 8
-        self.image = self.frames[self.cur_frame % 9]
+        self.image = self.frames[self.cur_frame]
         self.image = pygame.transform.scale(self.image, (50, 50))
 
         self.rect = self.image.get_rect()
@@ -681,8 +766,12 @@ class Wizard2(pygame.sprite.Sprite):
         self.field.team2[self] = (self.field_x, self.field_y)
         self.picked = False
         self.is_animating = False
+        self.someoned = False
+        self.walking = False
         self.health = 10
         self.damage = 3
+        self.toa = ""
+        self.first = False
 
     def cut_sheet(self, sheet, columns, rows):
         self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
@@ -696,8 +785,30 @@ class Wizard2(pygame.sprite.Sprite):
     def attackanimate(self):
         self.is_animating = True
 
+    def somd(self, x):
+        self.someoned = True
+        self.toa = x
+        self.first = True
+
     def update(self, *args):
+
         self.image = self.frames[self.cur_frame]
+        if self.someoned:
+            if str(self.toa)[3:5] == "ig":
+                if self.first:
+                    self.toa.cur_frame = 11
+                    self.first = False
+                self.toa.cur_frame += 1
+                if self.toa.cur_frame == 17:
+                    self.someoned = False
+            else:
+                print(1)
+                if self.first:
+                    self.toa.cur_frame = 9
+                    self.first = False
+                self.toa.cur_frame += 1
+                if self.toa.cur_frame == 14:
+                    self.someoned = False
 
         if self.is_animating:
             self.cur_frame += 1
@@ -750,7 +861,7 @@ class Wizard2(pygame.sprite.Sprite):
                             self.attackanimate()
                             attacked_ch.health -= self.damage
                             if attacked_ch.health <= 0:
-                                attacked_ch.image = pygame.transform.flip(attacked_ch.image, False, True)
+                                self.somd(attacked_ch)
                                 attacked_ch.alive = False
                                 self.field.team1[attacked_ch] = None
 
