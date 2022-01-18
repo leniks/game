@@ -521,7 +521,7 @@ class Knight2(pygame.sprite.Sprite):
         self.first = True
 
     def update(self, *args):
-        self.image = self.frames[self.cur_frame]
+        self.image = pygame.transform.flip((self.frames[self.cur_frame]),True, False)
         if self.someoned:
             if str(self.toa)[3:5] == "ig":
                 if self.first:
@@ -751,8 +751,9 @@ class Wizard2(pygame.sprite.Sprite):
         self.cut_sheet(load_image("dedinsidewiz.png"), 7, 1)
         self.cut_sheet(load_image("walkwiz.png"), 8, 1)
         self.cur_frame = 8
-        self.image = self.frames[self.cur_frame]
+        self.image = pygame.transform.flip((self.frames[self.cur_frame]),True, False)
         self.image = pygame.transform.scale(self.image, (50, 50))
+
 
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = \
@@ -791,7 +792,7 @@ class Wizard2(pygame.sprite.Sprite):
 
     def update(self, *args):
 
-        self.image = self.frames[self.cur_frame]
+        self.image = pygame.transform.flip((self.frames[self.cur_frame]),True, False)
         if self.someoned:
             if str(self.toa)[3:5] == "ig":
                 if self.first:
