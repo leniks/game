@@ -669,7 +669,6 @@ class Wizard1(pygame.sprite.Sprite):
                 if self.toa.cur_frame == 17:
                     self.someoned = False
             else:
-                print(1)
                 if self.first:
                     self.toa.cur_frame = 9
                     self.first = False
