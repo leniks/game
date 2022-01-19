@@ -4,6 +4,7 @@ import sys
 from random import randint, shuffle
 
 
+
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
     if not os.path.isfile(fullname):
@@ -137,6 +138,8 @@ def rules():
 
     text3 = font1.render("нажмите на любую кнопку, чтобы вернуться на главный экран", True, (217, 188, 156))
     dd = [[10, 730, '+'], [1140, 730, '-']]
+    fire = pygame.mixer.Sound("data/rules.mp3")
+    fire.play()
     while True:
         screen.blit(fon, (0, 0))
         pygame.draw.rect(screen, (140, 97, 48), (50, 50, 1050, 650))
@@ -458,6 +461,8 @@ class Knight1(pygame.sprite.Sprite):
                                     attacked_ch = key
                                     break
                             self.attackanimate()
+                            fire = pygame.mixer.Sound("data/knifee.mp3")
+                            fire.play()
                             attacked_ch.health -= self.damage
                             if attacked_ch.health <= 0:
                                 self.somd(attacked_ch)
@@ -588,6 +593,8 @@ class Knight2(pygame.sprite.Sprite):
                                     attacked_ch = key
                                     break
                             self.attackanimate()
+                            fire = pygame.mixer.Sound("data/knifee.mp3")
+                            fire.play()
                             attacked_ch.health -= self.damage
                             if attacked_ch.health <= 0:
                                 self.somd(attacked_ch)
@@ -727,6 +734,8 @@ class Wizard1(pygame.sprite.Sprite):
                                     break
 
                             self.attackanimate()
+                            fire = pygame.mixer.Sound("data/firee.mp3")
+                            fire.play()
 
                             attacked_ch.health -= self.damage
                             if attacked_ch.health <= 0:
@@ -753,8 +762,6 @@ class Wizard2(pygame.sprite.Sprite):
         self.cur_frame = 8
         self.image = pygame.transform.flip((self.frames[self.cur_frame]),True, False)
         self.image = pygame.transform.scale(self.image, (50, 50))
-
-
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = \
             field.cell_size * x + field.cell_size // 4, field.cell_size * y + field.cell_size // 8
@@ -859,6 +866,8 @@ class Wizard2(pygame.sprite.Sprite):
                                     attacked_ch = key
                                     break
                             self.attackanimate()
+                            fire = pygame.mixer.Sound("data/firee.mp3")
+                            fire.play()
                             attacked_ch.health -= self.damage
                             if attacked_ch.health <= 0:
                                 self.somd(attacked_ch)
@@ -906,6 +915,8 @@ def results(result=None):
     screen.blit(fon, (0, 0))
 
     text = ['результаты последних игр:']
+    fire = pygame.mixer.Sound("data/result.mp3")
+    fire.play()
     pygame.draw.rect(screen, (140, 97, 48), (50, 50, 1050, 650))
 
     text3 = font1.render("нажмите на любую кнопку, чтобы вернуться на главный экран", True, (217, 188, 156))
@@ -940,9 +951,16 @@ def results(result=None):
         clock.tick(FPS)
 
 
+
+
 def game():
     fon = pygame.transform.scale(load_image('fon1.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
+    pygame.mixer.music.load("data/mainmenu.mp3")
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.05)
+    startcheer = pygame.mixer.Sound("data/start.mp3")
+    startcheer.play()
 
     running = True
     while running:
@@ -1069,6 +1087,7 @@ if __name__ == '__main__':
     font = pygame.font.Font('data/21063.otf', 36)
     font1 = pygame.font.Font('data/21063.otf', 24)
     field = Field('generation1')
-
+    fire = pygame.mixer.Sound("data/artist.mp3")
+    fire.play()
     start_screen()
     
