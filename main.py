@@ -194,6 +194,7 @@ class Cell:
         self.size = Cell.size
         self.y = y
         self.x = x
+        self.passable = None
 
         if self.cell_type == 0:
             self.passable = True
