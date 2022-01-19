@@ -4,7 +4,6 @@ import sys
 from random import randint, shuffle
 
 
-
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
     if not os.path.isfile(fullname):
@@ -951,8 +950,6 @@ def results(result=None):
         clock.tick(FPS)
 
 
-
-
 def game():
     fon = pygame.transform.scale(load_image('fon1.jpg'), (WIDTH, HEIGHT))
     screen.blit(fon, (0, 0))
@@ -1090,4 +1087,3 @@ if __name__ == '__main__':
     fire = pygame.mixer.Sound("data/artist.mp3")
     fire.play()
     start_screen()
-    
